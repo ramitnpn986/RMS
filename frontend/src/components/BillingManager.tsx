@@ -117,7 +117,7 @@ function InvoiceModal({
   const billItems: RawBillItem[] = bill?.items ?? [];
   const vatRate = bill?.vatRate ?? (bill?.taxableAmount > 0 ? (bill.vatCollected / bill.taxableAmount) * 100 : 0);
   const hasVat = (bill?.vatCollected ?? 0) > 0;
-  const discountPercent = bill?.discountPercent ?? 0;
+const discountPercent = bill?.discountPercent ?? (bill?.subtotal > 0 ? (bill.discount / bill.subtotal) * 100 : 0);
   const hasDiscount = (bill?.discount ?? 0) > 0;
 
   return (
