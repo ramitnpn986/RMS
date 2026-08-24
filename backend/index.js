@@ -518,7 +518,6 @@ app.delete("/api/tables/:id", async (req, res) => {
 // 🧾 BILLS ROUTES
 // ==========================================
 
-
 app.post("/api/bills", async (req, res) => {
     try {
         const formData = req.body;
@@ -541,12 +540,14 @@ app.post("/api/bills", async (req, res) => {
                 total: parseNum(getValue(i.total, 0)),
             })),
             subtotal: parseNum(getValue(formData.subtotal, 0)),
+            discountPercent: parseNum(getValue(formData.discountPercent, 0)),
             discount: parseNum(getValue(formData.discount, 0)),
+            vatRate: parseNum(getValue(formData.vatRate, 0)),
             taxableAmount: parseNum(getValue(formData.taxableAmount, 0)),
             vatCollected: parseNum(getValue(formData.vatCollected, 0)),
             grandTotal: parseNum(getValue(formData.grandTotal, 0)),
             restaurantId: getValue(formData.restaurantId, ""),
-             orderId: getValue(formData.orderId, ""),
+            orderId: getValue(formData.orderId, ""),
         });
 
         return res.status(201).json({

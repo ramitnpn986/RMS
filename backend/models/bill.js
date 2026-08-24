@@ -21,7 +21,6 @@ const billItemSchema = mongoose.Schema({
         required: true,
     },
 }, { _id: false });
-
 const restaurantBillingSchema = mongoose.Schema({
     restaurantName: {
         type: String,
@@ -61,7 +60,15 @@ const restaurantBillingSchema = mongoose.Schema({
         type: Number,
         required: true,
     },
+    discountPercent: {
+        type: Number,
+        default: 0,
+    },
     discount: {
+        type: Number,
+        default: 0,
+    },
+    vatRate: {
         type: Number,
         default: 0,
     },
@@ -80,8 +87,8 @@ const restaurantBillingSchema = mongoose.Schema({
         required: true,
     },
     orderId: {
-    type: String,
-},
+        type: String,
+    },
 },
 {
     timestamps: true,
