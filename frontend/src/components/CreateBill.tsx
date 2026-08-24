@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Receipt, Users, Hash, Wallet, Banknote, Smartphone, CreditCard,
   CheckCircle2, X, Printer, Loader2, AlertTriangle, RefreshCw,
-  ClipboardList, ShoppingBag, PlusCircle, Percent, Clock,
+  ClipboardList, ShoppingBag, PlusCircle, Percent, Clock, Banknote as CashIcon,
 } from 'lucide-react';
 
 // ==========================================
@@ -151,7 +151,7 @@ function BillModal({
   const billItems: BillItem[] = bill?.items ?? [];
   const vatRate = bill?.vatRate ?? 0;
   const hasVat = vatRate > 0;
-  const hasDiscount = (bill?.discountPercent ?? 0) > 0;
+  const hasDiscount = (bill?.discount ?? 0) > 0;
 
   return (
     <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-[60] animate-fade-in">
@@ -283,7 +283,7 @@ function BillModal({
               </div>
               {hasDiscount && (
                 <div className="flex justify-between">
-                  <span>Discount ({bill.discountPercent}%):</span>
+                  <span>Discount{bill.discountPercent > 0 ? ` (${bill.discountPercent}%)` : ''}:</span>
                   <span className="font-mono">-NPR {money(bill.discount)}</span>
                 </div>
               )}
@@ -352,7 +352,12 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
   const [error, setError] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
+
+  // Discount can be entered as % OR as a flat Rs amount — the two inputs stay in sync.
   const [discountPercent, setDiscountPercent] = useState<number>(0);
+  const [discountAmountInput, setDiscountAmountInput] = useState<number>(0);
+  const [discountMode, setDiscountMode] = useState<'percent' | 'flat'>('percent');
+
   const [vatRate, setVatRate] = useState<number>(DEFAULT_VAT_RATE);
   const [submitting, setSubmitting] = useState(false);
   const [createdBill, setCreatedBill] = useState<any | null>(null);
@@ -386,6 +391,8 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
   // Reset discount + payment method + VAT whenever the selected order changes
   useEffect(() => {
     setDiscountPercent(0);
+    setDiscountAmountInput(0);
+    setDiscountMode('percent');
     setPaymentMethod(null);
     setVatRate(DEFAULT_VAT_RATE);
   }, [selectedOrder?._id]);
@@ -402,16 +409,45 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
 
   const subtotal = useMemo(() => billItems.reduce((s, i) => s + i.total, 0), [billItems]);
 
-  const safeDiscountPercent = Math.min(Math.max(discountPercent || 0, 0), 100);
   const safeVatRate = Math.min(Math.max(vatRate || 0, 0), 100);
 
-  const discountAmount = (subtotal * safeDiscountPercent) / 100;
+  // Whichever field was last edited ("discountMode") drives the actual discount amount.
+  // % mode: percent -> amount is derived from subtotal.
+  // Rs mode: amount is entered directly, percent is derived (for display/reference only).
+  const safeDiscountPercent =
+    discountMode === 'percent'
+      ? Math.min(Math.max(discountPercent || 0, 0), 100)
+      : subtotal > 0
+      ? Math.min(Math.max((discountAmountInput / subtotal) * 100, 0), 100)
+      : 0;
+
+  const discountAmount =
+    discountMode === 'flat'
+      ? Math.min(Math.max(discountAmountInput || 0, 0), subtotal)
+      : (subtotal * safeDiscountPercent) / 100;
+
   const taxableAmount = Math.max(subtotal - discountAmount, 0);
   const hasVat = safeVatRate > 0;
   const vatCollected = hasVat ? (taxableAmount * safeVatRate) / 100 : 0;
   const grandTotal = taxableAmount + vatCollected;
 
   const canCreateBill = !!selectedOrder && !!paymentMethod && !submitting;
+
+  // % input handler — typing here switches mode to 'percent' and recalculates the Rs field for display
+  const handlePercentChange = (val: number) => {
+    setDiscountMode('percent');
+    setDiscountPercent(val);
+    const pct = Math.min(Math.max(val || 0, 0), 100);
+    setDiscountAmountInput(Number(((subtotal * pct) / 100).toFixed(2)));
+  };
+
+  // Rs input handler — typing here switches mode to 'flat' and recalculates the % field for display
+  const handleAmountChange = (val: number) => {
+    setDiscountMode('flat');
+    const amt = Math.min(Math.max(val || 0, 0), subtotal);
+    setDiscountAmountInput(val);
+    setDiscountPercent(subtotal > 0 ? Number(((amt / subtotal) * 100).toFixed(2)) : 0);
+  };
 
 const handleCreateBill = async () => {
     if (!selectedOrder || !paymentMethod) return;
@@ -431,8 +467,8 @@ const handleCreateBill = async () => {
       date: new Date().toISOString(),
       items: billItems,
       subtotal,
-      discountPercent: safeDiscountPercent,
-      discount: discountAmount,
+      discountPercent: Number(safeDiscountPercent.toFixed(2)),
+      discount: discountAmount, // Rs amount — saved to the `discount` field in your schema
       vatRate: hasVat ? safeVatRate : 0,
       taxableAmount,
       vatCollected,
@@ -477,6 +513,8 @@ if (!orderUpdateRes.ok) {
   setSelectedOrder(null);
   setPaymentMethod(null);
   setDiscountPercent(0);
+  setDiscountAmountInput(0);
+  setDiscountMode('percent');
   setVatRate(DEFAULT_VAT_RATE);
 } catch (err: any) {
   setError(err.message || 'Could not save the bill. Please try again.');
@@ -630,8 +668,8 @@ if (!orderUpdateRes.ok) {
                   </div>
                 </div>
 
-                {/* Discount + VAT inputs */}
-                <div className="grid grid-cols-2 gap-3">
+                {/* Discount (% and Rs — two synced inputs) + VAT inputs */}
+                <div className="grid grid-cols-3 gap-3">
                   <div>
                     <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1.5 flex items-center gap-1.5">
                       <Percent className="h-3 w-3" />
@@ -641,8 +679,24 @@ if (!orderUpdateRes.ok) {
                       type="number"
                       min={0}
                       max={100}
-                      value={discountPercent === 0 ? '' : discountPercent}
-                      onChange={(e) => setDiscountPercent(Number(e.target.value) || 0)}
+                      value={safeDiscountPercent === 0 ? '' : Number(safeDiscountPercent.toFixed(2))}
+                      onChange={(e) => handlePercentChange(Number(e.target.value) || 0)}
+                      placeholder="0"
+                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1.5 flex items-center gap-1.5">
+                      <CashIcon className="h-3 w-3" />
+                      {lang === 'en' ? 'Discount (Rs)' : 'छुट (रु)'}
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={subtotal}
+                      value={discountAmount === 0 ? '' : Number(discountAmount.toFixed(2))}
+                      onChange={(e) => handleAmountChange(Number(e.target.value) || 0)}
                       placeholder="0"
                       className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
                     />
@@ -671,9 +725,9 @@ if (!orderUpdateRes.ok) {
                     <span>{lang === 'en' ? 'Subtotal' : 'उप-जम्मा'}</span>
                     <span className="font-mono">NPR {money(subtotal)}</span>
                   </div>
-                  {safeDiscountPercent > 0 && (
+                  {discountAmount > 0 && (
                     <div className="flex justify-between text-red-600">
-                      <span>{lang === 'en' ? 'Discount' : 'छुट'} ({safeDiscountPercent}%)</span>
+                      <span>{lang === 'en' ? 'Discount' : 'छुट'} ({Number(safeDiscountPercent.toFixed(2))}%)</span>
                       <span className="font-mono">-NPR {money(discountAmount)}</span>
                     </div>
                   )}
