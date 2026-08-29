@@ -33,7 +33,7 @@ interface BillItem {
 interface Bill {
   _id: string;
   id?: string;
-  orderId?: string; 
+  orderId?: string;
   restaurantName: string;
   location?: string;
   panOrVat?: string;
@@ -55,6 +55,9 @@ interface Bill {
 }
 
 type PaymentMethod = 'Cash' | 'eSewa' | 'Khalti' | 'IMEPay';
+
+// Amount paid per method, keyed by method id
+type PaymentSplit = Partial<Record<PaymentMethod, number>>;
 
 const PAYMENT_METHODS: { id: PaymentMethod; label: string; icon: React.ElementType; accent: string }[] = [
   { id: 'Cash', label: 'Cash', icon: Banknote, accent: 'emerald' },
@@ -87,7 +90,7 @@ interface GroupedPending {
   key: string;
   billTo: string;
   billIds: string[];
-    orderIds: string[];
+  orderIds: string[];
   bills: Bill[];
   tableNumbers: string[];
   mergedItems: BillItem[];
@@ -115,10 +118,6 @@ function groupPendingBills(bills: Bill[]): GroupedPending[] {
   const result: GroupedPending[] = [];
 
   groups.forEach((groupBills, key) => {
-    // Merge line items across all bills for this person.
-    // Same item name + same rate => combine quantity & total.
-    // Different rate for the same item name => kept as a separate line
-    // (prevents silently averaging/mismatching prices).
     const itemMap = new Map<string, BillItem>();
 
     for (const bill of groupBills) {
@@ -150,28 +149,27 @@ function groupPendingBills(bills: Bill[]): GroupedPending[] {
       new Set(groupBills.map((b) => b.tableNumber).filter(Boolean) as string[])
     );
 
-  result.push({
-  key,
-  billTo: groupBills[0].billTo,
-  billIds: groupBills.map((b) => b._id),
-  orderIds: Array.from(new Set(groupBills.map((b) => b.orderId).filter(Boolean) as string[])), // ADD THIS
-  bills: groupBills,
-  tableNumbers,
-  mergedItems,
-  subtotal,
-  discount,
-  taxableAmount,
-  vatCollected,
-  grandTotal,
-  earliestDate: sortedByDate[0]?.date || sortedByDate[0]?.createdAt || new Date().toISOString(),
-  restaurantId: groupBills[0].restaurantId,
-  restaurantName: groupBills[0].restaurantName,
-  location: groupBills[0].location,
-  panOrVat: groupBills[0].panOrVat,
-});
+    result.push({
+      key,
+      billTo: groupBills[0].billTo,
+      billIds: groupBills.map((b) => b._id),
+      orderIds: Array.from(new Set(groupBills.map((b) => b.orderId).filter(Boolean) as string[])),
+      bills: groupBills,
+      tableNumbers,
+      mergedItems,
+      subtotal,
+      discount,
+      taxableAmount,
+      vatCollected,
+      grandTotal,
+      earliestDate: sortedByDate[0]?.date || sortedByDate[0]?.createdAt || new Date().toISOString(),
+      restaurantId: groupBills[0].restaurantId,
+      restaurantName: groupBills[0].restaurantName,
+      location: groupBills[0].location,
+      panOrVat: groupBills[0].panOrVat,
+    });
   });
 
-  // Most recently active customer first
   result.sort((a, b) => new Date(b.earliestDate).getTime() - new Date(a.earliestDate).getTime());
 
   return result;
@@ -240,8 +238,6 @@ function PendingGroupCard({
 
 // ==========================================
 // PRINTABLE MERGED BILL MODAL (80mm thermal)
-// Used both for "Print" (pending) and the
-// post-payment receipt (paidPaymentMethod set)
 // ==========================================
 
 function MergedBillModal({
@@ -249,11 +245,13 @@ function MergedBillModal({
   lang,
   onClose,
   paidPaymentMethod,
+  paidBreakdown,
 }: {
   group: GroupedPending;
   lang: 'en' | 'ne';
   onClose: () => void;
-  paidPaymentMethod?: PaymentMethod | null;
+  paidPaymentMethod?: string | null;
+  paidBreakdown?: { label: string; amount: number }[];
 }) {
   const invoiceLabel = `PEND-${group.billIds
     .map((id) => id.slice(-4))
@@ -261,9 +259,6 @@ function MergedBillModal({
 
   const isPaidReceipt = !!paidPaymentMethod;
 
-  // Pull restaurant identity from the group itself (populated from the
-  // actual bill documents), falling back to the logged-in user's profile,
-  // then to a generic label — never hardcoded.
   const loggedInUser = getLoggedInUser();
   const displayRestaurantName =
     group.restaurantName || loggedInUser?.pharmacyName || 'Restaurant';
@@ -445,6 +440,16 @@ function MergedBillModal({
               <span>GRAND TOTAL:</span>
               <span className="font-mono text-amber-700">NPR {money(group.grandTotal)}</span>
             </div>
+            {isPaidReceipt && paidBreakdown && paidBreakdown.length > 0 && (
+              <div className="pt-1 border-t border-gray-200 space-y-0.5">
+                {paidBreakdown.map((p) => (
+                  <div className="flex justify-between" key={p.label}>
+                    <span>Paid via {p.label}:</span>
+                    <span className="font-mono">NPR {money(p.amount)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
             {isPaidReceipt && (
               <div className="flex justify-between text-emerald-700 font-bold text-[10px] pt-0.5">
                 <span>STATUS:</span>
@@ -500,14 +505,15 @@ export default function UnpaidBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Modal state: which group to show in the receipt/print modal,
-  // and — if set — which payment method it was just paid with
-  // (this is what makes the "paid" popup show automatically).
+  // Multi-select payment: which methods are active, and how much is assigned to each
+  const [selectedMethods, setSelectedMethods] = useState<Set<PaymentMethod>>(new Set());
+  const [paymentSplit, setPaymentSplit] = useState<PaymentSplit>({});
+
   const [printGroup, setPrintGroup] = useState<GroupedPending | null>(null);
-  const [receiptPaymentMethod, setReceiptPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [receiptPaymentMethod, setReceiptPaymentMethod] = useState<string | null>(null);
+  const [receiptBreakdown, setReceiptBreakdown] = useState<{ label: string; amount: number }[]>([]);
 
   const fetchBills = useCallback(async () => {
     setError('');
@@ -544,35 +550,99 @@ export default function UnpaidBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
     [groupedPending, selectedKey]
   );
 
-  // Reset payment method whenever the selected customer group changes
+  // Reset payment split whenever the selected customer group changes
   useEffect(() => {
-    setPaymentMethod(null);
+    setSelectedMethods(new Set());
+    setPaymentSplit({});
   }, [selectedKey]);
 
-  const canMarkPaid = !!selectedGroup && !!paymentMethod && !submitting;
+  const grandTotal = selectedGroup?.grandTotal ?? 0;
+
+  const totalPaid = useMemo(
+    () => Object.values(paymentSplit).reduce((s, v) => s + (Number(v) || 0), 0),
+    [paymentSplit]
+  );
+  const remainingBalance = Math.max(Number((grandTotal - totalPaid).toFixed(2)), 0);
+  const overpaidBy = totalPaid > grandTotal ? Number((totalPaid - grandTotal).toFixed(2)) : 0;
+  const isFullyPaid = remainingBalance <= 0.01 && totalPaid > 0;
+
+  const canMarkPaid = !!selectedGroup && !submitting && selectedMethods.size > 0 && totalPaid > 0;
+
+  // Toggling a payment method on/off. Only the FIRST method selected auto-fills the
+  // full remaining balance — subsequent selections start at 0 so the user types a split.
+  const toggleMethod = (id: PaymentMethod) => {
+    setSelectedMethods((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+        setPaymentSplit((split) => {
+          const { [id]: _drop, ...rest } = split;
+          return rest;
+        });
+      } else {
+        const isFirstSelection = prev.size === 0;
+        next.add(id);
+        setPaymentSplit((split) => ({
+          ...split,
+          [id]: isFirstSelection ? Number(Math.max(remainingBalance, 0).toFixed(2)) : 0,
+        }));
+      }
+      return next;
+    });
+  };
+
+  const updateSplitAmount = (id: PaymentMethod, value: number) => {
+    const safeValue = Math.max(Number.isFinite(value) ? value : 0, 0);
+    setPaymentSplit((split) => ({ ...split, [id]: safeValue }));
+  };
+
+  const fillRemaining = (id: PaymentMethod) => {
+    const current = paymentSplit[id] ?? 0;
+    setPaymentSplit((split) => ({
+      ...split,
+      [id]: Number((current + remainingBalance).toFixed(2)),
+    }));
+  };
 
   const handleMarkPaid = async () => {
-    if (!selectedGroup || !paymentMethod) return;
+    if (!selectedGroup || !canMarkPaid) return;
     setSubmitting(true);
     setError('');
 
     const groupBeingPaid = selectedGroup;
+    const methodLabel = selectedMethods.size > 1 ? 'Split' : Array.from(selectedMethods)[0] ?? 'Cash';
+
+    // Split amounts get distributed proportionally across each bill in the group,
+    // since each bill document needs its own cashPaidMoney/eSewaPaidMoney/etc.
+    const cashTotal = paymentSplit.Cash ?? 0;
+    const eSewaTotal = paymentSplit.eSewa ?? 0;
+    const khaltiTotal = paymentSplit.Khalti ?? 0;
+    const imePayTotal = paymentSplit.IMEPay ?? 0;
 
     try {
       const results = await Promise.allSettled(
-        groupBeingPaid.billIds.map((id) =>
-          fetch(`${BILLS_URL}/${id}`, {
+        groupBeingPaid.billIds.map((id) => {
+          const bill = groupBeingPaid.bills.find((b) => b._id === id);
+          const billShare = groupBeingPaid.grandTotal > 0 ? (bill?.grandTotal ?? 0) / groupBeingPaid.grandTotal : 0;
+
+          return fetch(`${BILLS_URL}/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ paymentMethod }),
+            body: JSON.stringify({
+              paymentMethod: methodLabel,
+              cashPaidMoney: Number((cashTotal * billShare).toFixed(2)),
+              eSewaPaidMoney: Number((eSewaTotal * billShare).toFixed(2)),
+              khaltiPaidMoney: Number((khaltiTotal * billShare).toFixed(2)),
+              imePayPaidMoney: Number((imePayTotal * billShare).toFixed(2)),
+            }),
           }).then(async (res) => {
             const data = await res.json();
             if (!res.ok || !data?.success) {
               throw new Error(data?.message || `Failed to update bill ${id}`);
             }
             return data;
-          })
-        )
+          });
+        })
       );
 
       const failures = results.filter((r) => r.status === 'rejected');
@@ -582,7 +652,6 @@ export default function UnpaidBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
         );
       }
 
-      // Also mark every linked order as Paid
       const orderResults = await Promise.allSettled(
         groupBeingPaid.orderIds.map((orderId) =>
           fetch(`${ORDERS_URL}/${orderId}`, {
@@ -602,15 +671,23 @@ export default function UnpaidBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
       const orderFailures = orderResults.filter((r) => r.status === 'rejected');
       if (orderFailures.length > 0) {
         console.error('Some linked orders failed to update:', orderFailures);
-        // Non-fatal: bills are already settled, so we don't block the receipt.
       }
+
+      const breakdown = [
+        { label: 'Cash', amount: cashTotal },
+        { label: 'eSewa', amount: eSewaTotal },
+        { label: 'Khalti', amount: khaltiTotal },
+        { label: 'IMEPay', amount: imePayTotal },
+      ].filter((p) => p.amount > 0);
 
       setAllBills((prev) => prev.filter((b) => !groupBeingPaid.billIds.includes(b._id)));
       setSelectedKey(null);
-      setPaymentMethod(null);
+      setSelectedMethods(new Set());
+      setPaymentSplit({});
 
       setPrintGroup(groupBeingPaid);
-      setReceiptPaymentMethod(paymentMethod);
+      setReceiptPaymentMethod(methodLabel);
+      setReceiptBreakdown(breakdown);
     } catch (err: any) {
       setError(err.message || 'Could not update payment status. Please try again.');
       window.setTimeout(() => setError(''), 8000);
@@ -622,9 +699,10 @@ export default function UnpaidBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
   const closeModal = () => {
     setPrintGroup(null);
     setReceiptPaymentMethod(null);
+    setReceiptBreakdown([]);
   };
 
-return (
+  return (
     <div className="h-full flex flex-col" id="unpaid-bill-root">
       {/* Page header */}
       <div className="flex items-center justify-between mb-5 shrink-0">
@@ -710,6 +788,7 @@ return (
               <button
                 onClick={() => {
                   setReceiptPaymentMethod(null);
+                  setReceiptBreakdown([]);
                   setPrintGroup(selectedGroup);
                 }}
                 className="flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-gray-900 cursor-pointer"
@@ -818,34 +897,102 @@ return (
                   </div>
                 </div>
 
-                {/* Payment method selection */}
+                {/* Payment method — multi-select with per-method amount */}
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
-                    {lang === 'en' ? 'Settle With' : 'भुक्तानी विधि'}
-                  </p>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                      {lang === 'en' ? 'Settle With' : 'भुक्तानी विधि'}
+                    </p>
+                    {selectedMethods.size > 0 && (
+                      <span className="text-[10px] font-mono font-bold text-gray-400">
+                        {selectedMethods.size} {lang === 'en' ? 'selected' : 'छानिएको'}
+                      </span>
+                    )}
+                  </div>
+
                   <div className="grid grid-cols-2 gap-2.5">
                     {PAYMENT_METHODS.map((pm) => {
                       const Icon = pm.icon;
                       const accent = ACCENT_CLASSES[pm.accent];
-                      const isActive = paymentMethod === pm.id;
+                      const isActive = selectedMethods.has(pm.id);
                       return (
-                        <button
-                          key={pm.id}
-                          type="button"
-                          onClick={() => setPaymentMethod(pm.id)}
-                          className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 text-sm font-semibold transition-all cursor-pointer ${
-                            isActive
-                              ? `${accent.border} ${accent.bg} ${accent.text} ring-2 ${accent.ring}`
-                              : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                          }`}
-                        >
-                          <Icon className={`h-4 w-4 ${isActive ? '' : 'text-gray-400'}`} />
-                          {pm.label}
-                          {isActive && <CheckCircle2 className="h-3.5 w-3.5 ml-auto" />}
-                        </button>
+                        <div key={pm.id} className="space-y-1.5">
+                          <button
+                            type="button"
+                            onClick={() => toggleMethod(pm.id)}
+                            className={`w-full flex items-center gap-2 rounded-xl border px-3 py-2.5 text-sm font-semibold transition-all cursor-pointer ${
+                              isActive
+                                ? `${accent.border} ${accent.bg} ${accent.text} ring-2 ${accent.ring}`
+                                : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                            }`}
+                          >
+                            <Icon className={`h-4 w-4 ${isActive ? '' : 'text-gray-400'}`} />
+                            {pm.label}
+                            {isActive && <CheckCircle2 className="h-3.5 w-3.5 ml-auto" />}
+                          </button>
+
+                          {isActive && (
+                            <div className="flex items-center gap-1.5 animate-fade-in">
+                              <div className="relative flex-1">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[11px] font-bold text-gray-400">
+                                  NPR
+                                </span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  step="0.01"
+                                  value={paymentSplit[pm.id] ?? ''}
+                                  onChange={(e) => updateSplitAmount(pm.id, Number(e.target.value))}
+                                  placeholder="0.00"
+                                  autoFocus
+                                  className={`w-full rounded-lg border px-3 py-2 pl-10 text-sm font-mono focus:outline-none focus:ring-1 ${accent.border} ${accent.ring} focus:border-amber-600 focus:ring-amber-600`}
+                                />
+                              </div>
+                              {remainingBalance > 0 && (
+                                <button
+                                  type="button"
+                                  onClick={() => fillRemaining(pm.id)}
+                                  title={lang === 'en' ? 'Fill remaining balance' : 'बाँकी रकम भर्नुहोस्'}
+                                  className="shrink-0 text-[10px] font-bold uppercase tracking-wide text-gray-500 bg-gray-100 hover:bg-gray-200 rounded-lg px-2 py-2 cursor-pointer transition-colors"
+                                >
+                                  {lang === 'en' ? 'Max' : 'अधि.'}
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
+
+                  {/* Live payment status strip */}
+                  {selectedMethods.size > 0 && (
+                    <div
+                      className={`mt-2.5 rounded-xl border px-3.5 py-2.5 text-xs font-semibold flex items-center justify-between ${
+                        isFullyPaid
+                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                          : overpaidBy > 0
+                          ? 'border-amber-200 bg-amber-50 text-amber-700'
+                          : 'border-gray-200 bg-gray-50 text-gray-600'
+                      }`}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        {isFullyPaid ? (
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                        ) : (
+                          <AlertTriangle className="h-3.5 w-3.5" />
+                        )}
+                        {isFullyPaid
+                          ? lang === 'en' ? 'Fully paid' : 'पूर्ण भुक्तानी'
+                          : overpaidBy > 0
+                          ? `${lang === 'en' ? 'Overpaid by' : 'बढी तिरेको'} NPR ${money(overpaidBy)}`
+                          : `${lang === 'en' ? 'Remaining' : 'बाँकी'}: NPR ${money(remainingBalance)}`}
+                      </span>
+                      <span className="font-mono">
+                        {money(totalPaid)} / {money(grandTotal)}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -866,9 +1013,11 @@ return (
                     ? lang === 'en' ? 'Marking paid…' : 'भुक्तानी हुँदै…'
                     : lang === 'en' ? `Mark ${selectedGroup.billIds.length} Bill(s) Paid` : `${selectedGroup.billIds.length} बिलहरू भुक्तानी भएको चिन्ह लगाउनुहोस्`}
                 </button>
-                {!paymentMethod && (
+                {!canMarkPaid && !submitting && (
                   <p className="text-[11px] text-gray-400 text-center mt-2">
-                    {lang === 'en' ? 'Select a payment method to settle' : 'भुक्तानी विधि छान्नुहोस्'}
+                    {selectedMethods.size === 0
+                      ? lang === 'en' ? 'Select at least one payment method' : 'भुक्तानी विधि छान्नुहोस्'
+                      : lang === 'en' ? 'Enter an amount for the selected method(s)' : 'रकम प्रविष्ट गर्नुहोस्'}
                   </p>
                 )}
               </div>
@@ -883,6 +1032,7 @@ return (
           lang={lang}
           onClose={closeModal}
           paidPaymentMethod={receiptPaymentMethod}
+          paidBreakdown={receiptBreakdown}
         />
       )}
     </div>
