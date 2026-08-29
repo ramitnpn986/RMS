@@ -53,14 +53,13 @@ interface BillItem {
   total: number;
 }
 
-type PaymentMethod = 'Cash' | 'eSewa' | 'Khalti' | 'IMEPay' | 'Pending';
+type PaymentMethod = 'Cash' | 'eSewa' | 'Khalti' | 'IMEPay';
 
 const PAYMENT_METHODS: { id: PaymentMethod; label: string; icon: React.ElementType; accent: string }[] = [
   { id: 'Cash', label: 'Cash', icon: Banknote, accent: 'emerald' },
   { id: 'eSewa', label: 'eSewa', icon: Smartphone, accent: 'green' },
   { id: 'Khalti', label: 'Khalti', icon: Wallet, accent: 'purple' },
   { id: 'IMEPay', label: 'IMEPay', icon: CreditCard, accent: 'sky' },
-  { id: 'Pending', label: 'Pending', icon: Clock, accent: 'amber' },
 ];
 
 const ACCENT_CLASSES: Record<string, { border: string; bg: string; text: string; ring: string }> = {
@@ -70,6 +69,9 @@ const ACCENT_CLASSES: Record<string, { border: string; bg: string; text: string;
   sky: { border: 'border-sky-500', bg: 'bg-sky-50', text: 'text-sky-700', ring: 'ring-sky-500/20' },
   amber: { border: 'border-amber-500', bg: 'bg-amber-50', text: 'text-amber-700', ring: 'ring-amber-500/20' },
 };
+
+// Amount paid per method, keyed by method id
+type PaymentSplit = Partial<Record<PaymentMethod, number>>;
 
 function money(n: number): string {
   return (Number.isFinite(n) ? n : 0).toFixed(2);
@@ -152,6 +154,14 @@ function BillModal({
   const vatRate = bill?.vatRate ?? 0;
   const hasVat = vatRate > 0;
   const hasDiscount = (bill?.discount ?? 0) > 0;
+
+  // Build a list of "method: amount" pairs actually paid, for the receipt footer
+  const paidBreakdown: { label: string; amount: number }[] = [
+    { label: 'Cash', amount: bill?.cashPaidMoney ?? 0 },
+    { label: 'eSewa', amount: bill?.eSewaPaidMoney ?? 0 },
+    { label: 'Khalti', amount: bill?.khaltiPaidMoney ?? 0 },
+    { label: 'IMEPay', amount: bill?.imePayPaidMoney ?? 0 },
+  ].filter((p) => p.amount > 0);
 
   return (
     <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-[60] animate-fade-in">
@@ -301,6 +311,16 @@ function BillModal({
                 <span>GRAND TOTAL:</span>
                 <span className="font-mono">NPR {money(bill.grandTotal)}</span>
               </div>
+              {paidBreakdown.length > 0 && (
+                <div className="pt-1 border-t border-dashed border-black space-y-0.5">
+                  {paidBreakdown.map((p) => (
+                    <div className="flex justify-between" key={p.label}>
+                      <span>Paid via {p.label}:</span>
+                      <span className="font-mono">NPR {money(p.amount)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="pt-6 flex justify-between items-end border-t border-dashed border-black text-[9px] font-black">
@@ -336,6 +356,7 @@ function BillModal({
     </div>
   );
 }
+
 // ==========================================
 // MAIN CREATE BILL PAGE
 // ==========================================
@@ -351,7 +372,11 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
+
+  // Multi-select payment: which methods are active, and how much is assigned to each
+  const [selectedMethods, setSelectedMethods] = useState<Set<PaymentMethod>>(new Set());
+  const [paymentSplit, setPaymentSplit] = useState<PaymentSplit>({});
+  const [markAsPending, setMarkAsPending] = useState(false);
 
   // Discount can be entered as % OR as a flat Rs amount — the two inputs stay in sync.
   const [discountPercent, setDiscountPercent] = useState<number>(0);
@@ -374,8 +399,8 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
         throw new Error(result.message || 'Failed to load orders.');
       }
       const served: Order[] = (result.data || []).filter(
-  (o: Order) => o.orderStatus === 'Served' && o.paymentStatus !== 'Paid' && o.paymentStatus !== 'Pending'
-);
+        (o: Order) => o.orderStatus === 'Served' && o.paymentStatus !== 'Paid' && o.paymentStatus !== 'Pending'
+      );
       setServedOrders(served);
     } catch (err: any) {
       setError(err.message || 'Could not connect to the server.');
@@ -388,12 +413,14 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
     fetchServedOrders();
   }, [fetchServedOrders]);
 
-  // Reset discount + payment method + VAT whenever the selected order changes
+  // Reset discount + payment split + VAT whenever the selected order changes
   useEffect(() => {
     setDiscountPercent(0);
     setDiscountAmountInput(0);
     setDiscountMode('percent');
-    setPaymentMethod(null);
+    setSelectedMethods(new Set());
+    setPaymentSplit({});
+    setMarkAsPending(false);
     setVatRate(DEFAULT_VAT_RATE);
   }, [selectedOrder?._id]);
 
@@ -412,8 +439,6 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
   const safeVatRate = Math.min(Math.max(vatRate || 0, 0), 100);
 
   // Whichever field was last edited ("discountMode") drives the actual discount amount.
-  // % mode: percent -> amount is derived from subtotal.
-  // Rs mode: amount is entered directly, percent is derived (for display/reference only).
   const safeDiscountPercent =
     discountMode === 'percent'
       ? Math.min(Math.max(discountPercent || 0, 0), 100)
@@ -431,7 +456,19 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
   const vatCollected = hasVat ? (taxableAmount * safeVatRate) / 100 : 0;
   const grandTotal = taxableAmount + vatCollected;
 
-  const canCreateBill = !!selectedOrder && !!paymentMethod && !submitting;
+  // Total actually assigned across all selected methods, and what's left to cover
+  const totalPaid = useMemo(
+    () => Object.values(paymentSplit).reduce((s, v) => s + (Number(v) || 0), 0),
+    [paymentSplit]
+  );
+  const remainingBalance = Math.max(Number((grandTotal - totalPaid).toFixed(2)), 0);
+  const overpaidBy = totalPaid > grandTotal ? Number((totalPaid - grandTotal).toFixed(2)) : 0;
+  const isFullyPaid = !markAsPending && remainingBalance <= 0.01 && totalPaid > 0;
+
+  const canCreateBill =
+    !!selectedOrder &&
+    !submitting &&
+    (markAsPending || (selectedMethods.size > 0 && totalPaid > 0));
 
   // % input handler — typing here switches mode to 'percent' and recalculates the Rs field for display
   const handlePercentChange = (val: number) => {
@@ -449,12 +486,68 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
     setDiscountPercent(subtotal > 0 ? Number(((amt / subtotal) * 100).toFixed(2)) : 0);
   };
 
-const handleCreateBill = async () => {
-    if (!selectedOrder || !paymentMethod) return;
+  // Toggling a payment method on/off. Only the FIRST method selected auto-fills the
+  // full remaining balance — subsequent selections start at 0 so the user types a split.
+  const toggleMethod = (id: PaymentMethod) => {
+    setMarkAsPending(false);
+    setSelectedMethods((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+        setPaymentSplit((split) => {
+          const { [id]: _drop, ...rest } = split;
+          return rest;
+        });
+      } else {
+        const isFirstSelection = prev.size === 0;
+        next.add(id);
+        setPaymentSplit((split) => ({
+          ...split,
+          [id]: isFirstSelection ? Number(Math.max(remainingBalance, 0).toFixed(2)) : 0,
+        }));
+      }
+      return next;
+    });
+  };
+
+  const updateSplitAmount = (id: PaymentMethod, value: number) => {
+    const safeValue = Math.max(Number.isFinite(value) ? value : 0, 0);
+    setPaymentSplit((split) => ({ ...split, [id]: safeValue }));
+  };
+
+  // "Fill remaining" — quick action next to each active method's input
+  const fillRemaining = (id: PaymentMethod) => {
+    const current = paymentSplit[id] ?? 0;
+    setPaymentSplit((split) => ({
+      ...split,
+      [id]: Number((current + remainingBalance).toFixed(2)),
+    }));
+  };
+
+  const togglePending = () => {
+    setMarkAsPending((prev) => {
+      const next = !prev;
+      if (next) {
+        setSelectedMethods(new Set());
+        setPaymentSplit({});
+      }
+      return next;
+    });
+  };
+
+  const handleCreateBill = async () => {
+    if (!selectedOrder || !canCreateBill) return;
     setSubmitting(true);
     setError('');
 
-    const isPending = paymentMethod === 'Pending';
+    const isPending = markAsPending;
+
+    // "Split" when 2+ methods are used, the sole method name when only 1, "Pending" when unpaid
+    const methodLabel = isPending
+      ? 'Pending'
+      : selectedMethods.size > 1
+      ? 'Split'
+      : Array.from(selectedMethods)[0] ?? 'Cash';
 
     const payload = {
       restaurantName,
@@ -463,65 +556,71 @@ const handleCreateBill = async () => {
       invoiceNo: `INV-${Date.now()}`,
       billTo: selectedOrder.customerName,
       tableNumber: selectedOrder.tableNumber,
-      paymentMethod,
+      paymentMethod: methodLabel,
+      cashPaidMoney: paymentSplit.Cash ?? 0,
+      eSewaPaidMoney: paymentSplit.eSewa ?? 0,
+      khaltiPaidMoney: paymentSplit.Khalti ?? 0,
+      imePayPaidMoney: paymentSplit.IMEPay ?? 0,
       date: new Date().toISOString(),
       items: billItems,
       subtotal,
       discountPercent: Number(safeDiscountPercent.toFixed(2)),
-      discount: discountAmount, // Rs amount — saved to the `discount` field in your schema
+      discount: discountAmount,
       vatRate: hasVat ? safeVatRate : 0,
       taxableAmount,
       vatCollected,
       grandTotal,
       restaurantId,
-       orderId: selectedOrder._id,
+      orderId: selectedOrder._id,
     };
 
-   try {
-  const res = await fetch(BILLS_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  const data = await res.json();
+    try {
+      const res = await fetch(BILLS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
 
-  if (!res.ok || !data?.success) {
-    throw new Error(data?.message || 'Failed to create bill.');
-  }
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.message || 'Failed to create bill.');
+      }
 
-const orderUpdateRes = await fetch(`${ORDERS_URL}/${selectedOrder._id}`, {
-  method: 'PUT',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    paymentStatus: isPending ? 'Pending' : 'Paid',
-    orderStatus: 'Completed',
-  }),
-});
+      const orderUpdateRes = await fetch(`${ORDERS_URL}/${selectedOrder._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paymentStatus: isPending ? 'Pending' : 'Paid',
+          orderStatus: 'Completed',
+        }),
+      });
 
-if (!orderUpdateRes.ok) {
-  const errText = await orderUpdateRes.text().catch(() => '');
-  console.error('Order update failed:', orderUpdateRes.status, errText);
-  throw new Error('Bill was created but order status failed to update. Please refresh and check.');
-}
+      if (!orderUpdateRes.ok) {
+        const errText = await orderUpdateRes.text().catch(() => '');
+        console.error('Order update failed:', orderUpdateRes.status, errText);
+        throw new Error('Bill was created but order status failed to update. Please refresh and check.');
+      }
 
-  setServedOrders((prev) => prev.filter((o) => o._id !== selectedOrder._id));
+      setServedOrders((prev) => prev.filter((o) => o._id !== selectedOrder._id));
 
-  if (!isPending) {
-    setCreatedBill(data.data || payload);
-  }
+      if (!isPending) {
+        setCreatedBill(data.data || payload);
+      }
 
-  setSelectedOrder(null);
-  setPaymentMethod(null);
-  setDiscountPercent(0);
-  setDiscountAmountInput(0);
-  setDiscountMode('percent');
-  setVatRate(DEFAULT_VAT_RATE);
-} catch (err: any) {
-  setError(err.message || 'Could not save the bill. Please try again.');
-  window.setTimeout(() => setError(''), 5000);
-} finally {
-  setSubmitting(false);
-}
+      setSelectedOrder(null);
+      setSelectedMethods(new Set());
+      setPaymentSplit({});
+      setMarkAsPending(false);
+      setDiscountPercent(0);
+      setDiscountAmountInput(0);
+      setDiscountMode('percent');
+      setVatRate(DEFAULT_VAT_RATE);
+    } catch (err: any) {
+      setError(err.message || 'Could not save the bill. Please try again.');
+      window.setTimeout(() => setError(''), 5000);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -743,34 +842,118 @@ if (!orderUpdateRes.ok) {
                   </div>
                 </div>
 
-                {/* Payment method */}
+                {/* Payment method — multi-select with per-method amount */}
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
-                    {lang === 'en' ? 'Payment Method' : 'भुक्तानी विधि'}
-                  </p>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                      {lang === 'en' ? 'Payment Method' : 'भुक्तानी विधि'}
+                    </p>
+                    {selectedMethods.size > 0 && (
+                      <span className="text-[10px] font-mono font-bold text-gray-400">
+                        {selectedMethods.size} {lang === 'en' ? 'selected' : 'छानिएको'}
+                      </span>
+                    )}
+                  </div>
+
                   <div className="grid grid-cols-2 gap-2.5">
                     {PAYMENT_METHODS.map((pm) => {
                       const Icon = pm.icon;
                       const accent = ACCENT_CLASSES[pm.accent];
-                      const isActive = paymentMethod === pm.id;
+                      const isActive = selectedMethods.has(pm.id);
                       return (
-                        <button
-                          key={pm.id}
-                          type="button"
-                          onClick={() => setPaymentMethod(pm.id)}
-                          className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 text-sm font-semibold transition-all cursor-pointer ${
-                            isActive
-                              ? `${accent.border} ${accent.bg} ${accent.text} ring-2 ${accent.ring}`
-                              : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                          }`}
-                        >
-                          <Icon className={`h-4 w-4 ${isActive ? '' : 'text-gray-400'}`} />
-                          {pm.label}
-                          {isActive && <CheckCircle2 className="h-3.5 w-3.5 ml-auto" />}
-                        </button>
+                        <div key={pm.id} className="space-y-1.5">
+                          <button
+                            type="button"
+                            onClick={() => toggleMethod(pm.id)}
+                            className={`w-full flex items-center gap-2 rounded-xl border px-3 py-2.5 text-sm font-semibold transition-all cursor-pointer ${
+                              isActive
+                                ? `${accent.border} ${accent.bg} ${accent.text} ring-2 ${accent.ring}`
+                                : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                            }`}
+                          >
+                            <Icon className={`h-4 w-4 ${isActive ? '' : 'text-gray-400'}`} />
+                            {pm.label}
+                            {isActive && <CheckCircle2 className="h-3.5 w-3.5 ml-auto" />}
+                          </button>
+
+                          {/* Amount input appears only when this method is selected */}
+                          {isActive && (
+                            <div className="flex items-center gap-1.5 animate-fade-in">
+                              <div className="relative flex-1">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[11px] font-bold text-gray-400">
+                                  NPR
+                                </span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  step="0.01"
+                                  value={paymentSplit[pm.id] ?? ''}
+                                  onChange={(e) => updateSplitAmount(pm.id, Number(e.target.value))}
+                                  placeholder="0.00"
+                                  autoFocus
+                                  className={`w-full rounded-lg border px-3 py-2 pl-10 text-sm font-mono focus:outline-none focus:ring-1 ${accent.border} ${accent.ring} focus:border-teal-600 focus:ring-teal-600`}
+                                />
+                              </div>
+                              {remainingBalance > 0 && (
+                                <button
+                                  type="button"
+                                  onClick={() => fillRemaining(pm.id)}
+                                  title={lang === 'en' ? 'Fill remaining balance' : 'बाँकी रकम भर्नुहोस्'}
+                                  className="shrink-0 text-[10px] font-bold uppercase tracking-wide text-gray-500 bg-gray-100 hover:bg-gray-200 rounded-lg px-2 py-2 cursor-pointer transition-colors"
+                                >
+                                  {lang === 'en' ? 'Max' : 'अधि.'}
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
+
+                  {/* Mark as pending — separate toggle, mutually exclusive with method selection */}
+                  <button
+                    type="button"
+                    onClick={togglePending}
+                    className={`mt-2.5 w-full flex items-center gap-2 rounded-xl border px-3 py-2.5 text-sm font-semibold transition-all cursor-pointer ${
+                      markAsPending
+                        ? 'border-amber-500 bg-amber-50 text-amber-700 ring-2 ring-amber-500/20'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Clock className={`h-4 w-4 ${markAsPending ? '' : 'text-gray-400'}`} />
+                    {lang === 'en' ? 'Mark as Pending (unpaid)' : 'बाँकी राख्नुहोस्'}
+                    {markAsPending && <CheckCircle2 className="h-3.5 w-3.5 ml-auto" />}
+                  </button>
+
+                  {/* Live payment status strip */}
+                  {selectedMethods.size > 0 && !markAsPending && (
+                    <div
+                      className={`mt-2.5 rounded-xl border px-3.5 py-2.5 text-xs font-semibold flex items-center justify-between ${
+                        isFullyPaid
+                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                          : overpaidBy > 0
+                          ? 'border-amber-200 bg-amber-50 text-amber-700'
+                          : 'border-gray-200 bg-gray-50 text-gray-600'
+                      }`}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        {isFullyPaid ? (
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                        ) : (
+                          <AlertTriangle className="h-3.5 w-3.5" />
+                        )}
+                        {isFullyPaid
+                          ? lang === 'en' ? 'Fully paid' : 'पूर्ण भुक्तानी'
+                          : overpaidBy > 0
+                          ? `${lang === 'en' ? 'Overpaid by' : 'बढी तिरेको'} NPR ${money(overpaidBy)}`
+                          : `${lang === 'en' ? 'Remaining' : 'बाँकी'}: NPR ${money(remainingBalance)}`}
+                      </span>
+                      <span className="font-mono">
+                        {money(totalPaid)} / {money(grandTotal)}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -790,9 +973,11 @@ if (!orderUpdateRes.ok) {
                     ? lang === 'en' ? 'Creating bill…' : 'बिल बनाउँदै…'
                     : lang === 'en' ? 'Create Bill' : 'बिल बनाउनुहोस्'}
                 </button>
-                {!paymentMethod && (
+                {!canCreateBill && !submitting && (
                   <p className="text-[11px] text-gray-400 text-center mt-2">
-                    {lang === 'en' ? 'Select a payment method to continue' : 'भुक्तानी विधि छान्नुहोस्'}
+                    {selectedMethods.size === 0 && !markAsPending
+                      ? lang === 'en' ? 'Select at least one payment method' : 'भुक्तानी विधि छान्नुहोस्'
+                      : lang === 'en' ? 'Enter an amount for the selected method(s)' : 'रकम प्रविष्ट गर्नुहोस्'}
                   </p>
                 )}
               </div>

@@ -48,6 +48,22 @@ const restaurantBillingSchema = mongoose.Schema({
         enum: ["Cash", "eSewa", "Khalti", "IMEPay", "Card", "Due","Pending"],
         default: "Cash",
     },
+    cashPaidMoney: {
+        type: Number,
+        default: 0,
+    },
+    eSewaPaidMoney: {
+        type: Number,
+        default: 0,
+    },
+    khaltiPaidMoney: {
+        type: Number,
+        default: 0,
+    },
+    imePayPaidMoney: {
+        type: Number,
+        default: 0,
+    },
     date: {
         type: Date,
         default: Date.now,

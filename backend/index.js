@@ -532,6 +532,10 @@ app.post("/api/bills", async (req, res) => {
             billTo: getValue(formData.billTo, "Anonymous Customer"),
             tableNumber: getValue(formData.tableNumber, "N/A"),
             paymentMethod: getValue(formData.paymentMethod, "Cash"),
+            cashPaidMoney: parseNum(getValue(formData.cashPaidMoney, 0)),
+            eSewaPaidMoney: parseNum(getValue(formData.eSewaPaidMoney, 0)),
+            khaltiPaidMoney: parseNum(getValue(formData.khaltiPaidMoney, 0)),
+            imePayPaidMoney: parseNum(getValue(formData.imePayPaidMoney, 0)),
             date: formData.date ? new Date(formData.date) : new Date(),
             items: (formData.items || []).map(i => ({
                 itemName: i.itemName || "Unknown Item",
@@ -584,6 +588,10 @@ app.get("/api/bills", async (req, res) => {
                 billTo: bill.billTo,
                 tableNumber: bill.tableNumber,
                 paymentMethod: bill.paymentMethod,
+                cashPaidMoney: bill.cashPaidMoney,
+                eSewaPaidMoney: bill.eSewaPaidMoney,
+                khaltiPaidMoney: bill.khaltiPaidMoney,
+                imePayPaidMoney: bill.imePayPaidMoney,
                 date: bill.date,
                 items: bill.items,
                 subtotal: bill.subtotal,
@@ -612,18 +620,19 @@ app.get("/api/bills", async (req, res) => {
 app.patch("/api/bills/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        const { paymentMethod } = req.body;
+        const { paymentMethod, cashPaidMoney, eSewaPaidMoney, khaltiPaidMoney, imePayPaidMoney } = req.body;
 
-        if (!paymentMethod) {
-            return res.status(400).json({
-                success: false,
-                message: "paymentMethod is required."
-            });
-        }
+        // Build an update object dynamically with whatever was sent
+        const updateFields = {};
+        if (paymentMethod !== undefined) updateFields.paymentMethod = paymentMethod;
+        if (cashPaidMoney !== undefined) updateFields.cashPaidMoney = parseNum(cashPaidMoney);
+        if (eSewaPaidMoney !== undefined) updateFields.eSewaPaidMoney = parseNum(eSewaPaidMoney);
+        if (khaltiPaidMoney !== undefined) updateFields.khaltiPaidMoney = parseNum(khaltiPaidMoney);
+        if (imePayPaidMoney !== undefined) updateFields.imePayPaidMoney = parseNum(imePayPaidMoney);
 
         const updatedBill = await Bill.findByIdAndUpdate(
             id,
-            { paymentMethod },
+            updateFields,
             { new: true, runValidators: true }
         );
 
@@ -636,7 +645,7 @@ app.patch("/api/bills/:id", async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Bill payment status updated.",
+            message: "Bill payment updated successfully.",
             data: updatedBill
         });
     } catch (error) {
