@@ -53,6 +53,10 @@ interface RawBill {
   billTo: string;
   tableNumber: string;
   paymentMethod: string;
+  cashPaidMoney?: number;
+  eSewaPaidMoney?: number;
+  khaltiPaidMoney?: number;
+  imePayPaidMoney?: number;
   date: string;
   items: RawBillItem[];
   subtotal: number;
@@ -66,43 +70,23 @@ interface RawBill {
   createdAt?: string;
 }
 
-const rawBillToSale = (bill: RawBill, patients: Patient[]): Sale => {
-  const matchedPatient = patients.find((p) => p.fullName === bill.billTo);
-  const vatRate = bill.taxableAmount > 0 ? (bill.vatCollected / bill.taxableAmount) * 100 : 0;
-
-  return {
-    id: bill.invoiceNo,
-    createdAt: bill.date || bill.createdAt,
-    patientId: matchedPatient?.id || null,
-    pharmacyName: bill.restaurantName,
-    location: bill.location,
-    panOrVat: bill.panOrVat,
-    items: (bill.items || []).map((item) => ({
-      medicineId: '',
-      name: item.itemName,
-      dosage: '',
-      quantity: item.quantity,
-      unitPrice: item.rate,
-      totalPrice: item.total,
-    })),
-    subTotal: bill.subtotal,
-    discount: bill.discount,
-    vatRate,
-    vatAmount: bill.vatCollected,
-    grandTotal: bill.grandTotal,
-    paymentMethod: bill.paymentMethod as Sale['paymentMethod'],
-  } as Sale;
-};
-
 function money(n: number): string {
   return (Number.isFinite(n) ? n : 0).toFixed(2);
 }
 
+// Builds the list of "method: amount" pairs actually paid on a bill,
+// used both in the ledger's method badge and on the printed receipt.
+function getPaidBreakdown(bill: RawBill): { label: string; amount: number }[] {
+  return [
+    { label: 'Cash', amount: bill.cashPaidMoney ?? 0 },
+    { label: 'eSewa', amount: bill.eSewaPaidMoney ?? 0 },
+    { label: 'Khalti', amount: bill.khaltiPaidMoney ?? 0 },
+    { label: 'IMEPay', amount: bill.imePayPaidMoney ?? 0 },
+  ].filter((p) => p.amount > 0);
+}
+
 // ==========================================
 // PRINTABLE INVOICE MODAL — same style as CreateBill's BillModal
-// Print sizing/visibility for #printable-bill now lives entirely in
-// index.css's global @media print block — no local <style> here anymore,
-// to avoid two competing print stylesheets fighting over the same ID.
 // ==========================================
 
 function InvoiceModal({
@@ -117,8 +101,9 @@ function InvoiceModal({
   const billItems: RawBillItem[] = bill?.items ?? [];
   const vatRate = bill?.vatRate ?? (bill?.taxableAmount > 0 ? (bill.vatCollected / bill.taxableAmount) * 100 : 0);
   const hasVat = (bill?.vatCollected ?? 0) > 0;
-const discountPercent = bill?.discountPercent ?? (bill?.subtotal > 0 ? (bill.discount / bill.subtotal) * 100 : 0);
+  const discountPercent = bill?.discountPercent ?? (bill?.subtotal > 0 ? (bill.discount / bill.subtotal) * 100 : 0);
   const hasDiscount = (bill?.discount ?? 0) > 0;
+  const paidBreakdown = getPaidBreakdown(bill);
 
   return (
     <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-[60] animate-fade-in">
@@ -212,7 +197,7 @@ const discountPercent = bill?.discountPercent ?? (bill?.subtotal > 0 ? (bill.dis
               </div>
               {hasDiscount && (
                 <div className="flex justify-between">
-                  <span>Discount ({discountPercent}%):</span>
+                  <span>Discount ({discountPercent.toFixed(1)}%):</span>
                   <span className="font-mono">-NPR {money(bill.discount)}</span>
                 </div>
               )}
@@ -230,6 +215,18 @@ const discountPercent = bill?.discountPercent ?? (bill?.subtotal > 0 ? (bill.dis
                 <span>GRAND TOTAL:</span>
                 <span className="font-mono">NPR {money(bill.grandTotal)}</span>
               </div>
+
+              {/* Per-method payment breakdown — shows only methods that were actually used */}
+              {paidBreakdown.length > 0 && (
+                <div className="pt-1 mt-1 border-t border-dashed border-black space-y-0.5">
+                  {paidBreakdown.map((p) => (
+                    <div className="flex justify-between" key={p.label}>
+                      <span>Paid via {p.label}:</span>
+                      <span className="font-mono">NPR {money(p.amount)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="pt-6 flex justify-between items-end border-t border-dashed border-black text-[9px] font-black">
@@ -337,10 +334,13 @@ export default function BillingManager({
   const todayStr = new Date().toISOString().slice(0, 10);
   const todaysInvoices = bills.filter((inv) => (inv.date || inv.createdAt || '').startsWith(todayStr));
 
-  const cashToday = todaysInvoices.filter((s) => s.paymentMethod === 'Cash').reduce((sum, s) => sum + s.grandTotal, 0);
-  const esewaToday = todaysInvoices.filter((s) => s.paymentMethod === 'eSewa').reduce((sum, s) => sum + s.grandTotal, 0);
-  const khaltiToday = todaysInvoices.filter((s) => s.paymentMethod === 'Khalti').reduce((sum, s) => sum + s.grandTotal, 0);
-  const imeToday = todaysInvoices.filter((s) => s.paymentMethod === 'IMEPay').reduce((sum, s) => sum + s.grandTotal, 0);
+  // Summed directly from the per-method fields, so split-payment bills contribute
+  // their actual cash/eSewa/Khalti/IMEPay portions instead of only counting
+  // toward whichever single label paymentMethod happened to hold.
+  const cashToday = todaysInvoices.reduce((sum, s) => sum + (s.cashPaidMoney || 0), 0);
+  const esewaToday = todaysInvoices.reduce((sum, s) => sum + (s.eSewaPaidMoney || 0), 0);
+  const khaltiToday = todaysInvoices.reduce((sum, s) => sum + (s.khaltiPaidMoney || 0), 0);
+  const imeToday = todaysInvoices.reduce((sum, s) => sum + (s.imePayPaidMoney || 0), 0);
 
   const totalTaxableToday = todaysInvoices.reduce((sum, s) => sum + (s.taxableAmount || 0), 0);
   const totalVatToday = todaysInvoices.reduce((sum, s) => sum + (s.vatCollected || 0), 0);
@@ -450,6 +450,8 @@ export default function BillingManager({
                 ) : (
                   filteredInvoices.map((invoice) => {
                     const pat = patients.find((p) => p.fullName === invoice.billTo);
+                    const paidBreakdown = getPaidBreakdown(invoice);
+                    const isSplit = invoice.paymentMethod === 'Split' || paidBreakdown.length > 1;
 
                     return (
                       <tr key={invoice.invoiceNo} className="hover:bg-gray-50/50 transition-colors">
@@ -465,13 +467,28 @@ export default function BillingManager({
                           )}
                         </td>
                         <td className="px-4 py-3.5">
-                          <span className={`inline-flex px-1.5 py-0.2 rounded font-bold text-[10px] uppercase border ${
-                            invoice.paymentMethod === 'Cash' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' :
-                            invoice.paymentMethod === 'eSewa' ? 'bg-[#60bb46]/10 text-[#4c9b36] border-[#60bb46]/30' :
-                            'bg-indigo-50 text-indigo-700 border-indigo-200'
-                          }`}>
-                            {invoice.paymentMethod}
-                          </span>
+                          <div className="space-y-1">
+                            <span className={`inline-flex px-1.5 py-0.2 rounded font-bold text-[10px] uppercase border ${
+                              invoice.paymentMethod === 'Cash' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' :
+                              invoice.paymentMethod === 'eSewa' ? 'bg-[#60bb46]/10 text-[#4c9b36] border-[#60bb46]/30' :
+                              invoice.paymentMethod === 'Khalti' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
+                              invoice.paymentMethod === 'IMEPay' ? 'bg-sky-50 text-sky-700 border-sky-200' :
+                              invoice.paymentMethod === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                              'bg-purple-50 text-purple-700 border-purple-200'
+                            }`}>
+                              {invoice.paymentMethod}
+                            </span>
+                            {/* Per-method breakdown, shown only for split payments */}
+                            {isSplit && paidBreakdown.length > 0 && (
+                              <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[9px] font-mono text-gray-400">
+                                {paidBreakdown.map((p) => (
+                                  <span key={p.label}>
+                                    {p.label}: {money(p.amount)}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </td>
                         <td className="px-4 py-3.5 text-right font-mono">
                           NPR {(invoice.taxableAmount || 0).toFixed(2)}
