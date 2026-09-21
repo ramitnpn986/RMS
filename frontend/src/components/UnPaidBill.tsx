@@ -195,8 +195,8 @@ function PendingGroupCard({
       onClick={() => onSelect(group)}
       className={`w-full text-left rounded-2xl border p-4 transition-all cursor-pointer ${
         isSelected
-          ? 'bg-amber-50 border-amber-400 ring-2 ring-amber-500/20 shadow-sm'
-          : 'bg-white border-gray-200 hover:border-amber-300 hover:shadow-sm'
+          ? 'bg-purple-50 border-purple-400 ring-2 ring-purple-500/20 shadow-sm'
+          : 'bg-white border-gray-200 hover:border-purple-300 hover:shadow-sm'
       }`}
     >
       <div className="flex items-start justify-between gap-3">
@@ -209,7 +209,7 @@ function PendingGroupCard({
             {group.billTo}
           </p>
         </div>
-        <span className="shrink-0 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide bg-amber-50 text-amber-700 border border-amber-200">
+        <span className="shrink-0 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide bg-purple-50 text-purple-700 border border-purple-200">
           Pending
         </span>
       </div>
@@ -229,7 +229,7 @@ function PendingGroupCard({
         </p>
       )}
 
-      <p className="mt-1 text-right font-mono text-sm font-bold text-amber-700">
+      <p className="mt-1 text-right font-mono text-sm font-bold text-purple-700">
         NPR {money(group.grandTotal)}
       </p>
     </button>
@@ -330,7 +330,7 @@ function MergedBillModal({
             {isPaidReceipt ? (
               <CheckCircle2 className="h-5 w-5 text-emerald-600" />
             ) : (
-              <Receipt className="h-5 w-5 text-amber-600" />
+              <Receipt className="h-5 w-5 text-purple-600" />
             )}
             {isPaidReceipt
               ? (lang === 'en' ? 'Payment Successful' : 'भुक्तानी सफल')
@@ -438,7 +438,7 @@ function MergedBillModal({
             )}
             <div className="flex justify-between border-t border-gray-400 pt-1 text-[11px] text-gray-950 font-bold">
               <span>GRAND TOTAL:</span>
-              <span className="font-mono text-amber-700">NPR {money(group.grandTotal)}</span>
+              <span className="font-mono text-purple-700">NPR {money(group.grandTotal)}</span>
             </div>
             {isPaidReceipt && paidBreakdown && paidBreakdown.length > 0 && (
               <div className="pt-1 border-t border-gray-200 space-y-0.5">
@@ -482,7 +482,7 @@ function MergedBillModal({
           <button
             type="button"
             onClick={() => window.print()}
-            className="px-6 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
+            className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
           >
             <Printer className="h-4 w-4" />
             Print Invoice
@@ -707,7 +707,7 @@ export default function UnpaidBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
       {/* Page header */}
       <div className="flex items-center justify-between mb-5 shrink-0">
         <div className="flex items-center gap-2.5">
-          <div className="h-10 w-10 bg-amber-600 rounded-xl flex items-center justify-center text-white shadow-xs">
+          <div className="h-10 w-10 bg-purple-600 rounded-xl flex items-center justify-center text-white shadow-xs">
             <Clock className="h-5 w-5" />
           </div>
           <div>
@@ -893,7 +893,7 @@ export default function UnpaidBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
                   )}
                   <div className="flex justify-between pt-1.5 mt-1.5 border-t border-gray-150 text-base font-bold text-gray-900">
                     <span>{lang === 'en' ? 'Grand Total' : 'कुल जम्मा'}</span>
-                    <span className="font-mono text-amber-700">NPR {money(selectedGroup.grandTotal)}</span>
+                    <span className="font-mono text-purple-700">NPR {money(selectedGroup.grandTotal)}</span>
                   </div>
                 </div>
 
@@ -945,7 +945,7 @@ export default function UnpaidBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
                                   onChange={(e) => updateSplitAmount(pm.id, Number(e.target.value))}
                                   placeholder="0.00"
                                   autoFocus
-                                  className={`w-full rounded-lg border px-3 py-2 pl-10 text-sm font-mono focus:outline-none focus:ring-1 ${accent.border} ${accent.ring} focus:border-amber-600 focus:ring-amber-600`}
+                                  className={`w-full rounded-lg border px-3 py-2 pl-10 text-sm font-mono focus:outline-none focus:ring-1 ${accent.border} ${accent.ring} focus:border-purple-600 focus:ring-purple-600`}
                                 />
                               </div>
                               {remainingBalance > 0 && (
@@ -972,7 +972,7 @@ export default function UnpaidBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
                         isFullyPaid
                           ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
                           : overpaidBy > 0
-                          ? 'border-amber-200 bg-amber-50 text-amber-700'
+                          ? 'border-purple-200 bg-purple-50 text-purple-700'
                           : 'border-gray-200 bg-gray-50 text-gray-600'
                       }`}
                     >
@@ -1002,7 +1002,7 @@ export default function UnpaidBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
                   type="button"
                   onClick={handleMarkPaid}
                   disabled={!canMarkPaid}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-amber-600 hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold py-3 transition-colors shadow-sm cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold py-3 transition-colors shadow-sm cursor-pointer"
                 >
                   {submitting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
