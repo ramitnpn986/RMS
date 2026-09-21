@@ -265,9 +265,9 @@ function TabButton({ active, onClick, label, icon }) {
       onClick={onClick}
       style={{
         ...styles.tabButton,
-        backgroundColor: active ? "#0f766e" : "#ffffff",
+        backgroundColor: active ? "#9333EA" : "#ffffff",
         color: active ? "#ffffff" : "#334155",
-        boxShadow: active ? "0 4px 12px rgba(15,118,110,0.25)" : "0 1px 3px rgba(0,0,0,0.06)",
+        boxShadow: active ? "0 4px 12px rgba(147,51,234,0.25)" : "0 1px 3px rgba(0,0,0,0.06)",
       }}
     >
       <span style={{ marginRight: 8 }}>{icon}</span>
@@ -435,7 +435,7 @@ const styles = {
     padding: "13px 20px",
     borderRadius: 10,
     border: "none",
-    backgroundColor: "#0f766e",
+    backgroundColor: "#9333EA",
     color: "#ffffff",
     fontSize: 15,
     fontWeight: 600,
