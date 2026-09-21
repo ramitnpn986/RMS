@@ -27,7 +27,7 @@ const initialForm: FormState = {
 const STATUS_OPTIONS = ["Available", "Occupied", "Reserved", "Out of Service"];
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; dot: string; border: string }> = {
-  Available: { bg: "#ecfdf5", text: "#047857", dot: "#10b981", border: "#a7f3d0" },
+  Available: { bg: "#ecfdf5", text: "purple-600", dot: "purple-500", border: "#a7f3d0" },
   Occupied: { bg: "#fef2f2", text: "#b91c1c", dot: "#ef4444", border: "#fecaca" },
   Reserved: { bg: "#fffbeb", text: "#b45309", dot: "#f59e0b", border: "#fde68a" },
   "Out of Service": { bg: "#f3f4f6", text: "#4b5563", dot: "#9ca3af", border: "#e5e7eb" },
