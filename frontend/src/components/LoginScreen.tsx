@@ -101,7 +101,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
       <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-200/20 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-200/20 blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-md space-y-4 mt-2" id="login-container">
+      <div className="w-full max-w-md space-y-4 mt-20" id="login-container">
         
         {/* Core Auth Card - Removed top padding and vertical space gaps */}
         <div className="bg-white border border-slate-100 rounded-3xl shadow-xl px-6 pb-6 pt-0 sm:px-8 sm:pb-8 sm:pt-0 relative overflow-hidden" id="login-card">
