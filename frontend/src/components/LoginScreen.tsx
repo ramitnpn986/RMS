@@ -113,32 +113,31 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
       <div className="w-full max-w-md space-y-6 mt-22" id="login-container">
         
         {/* Core Auth Card */}
-        <div className="bg-white border border-slate-100 rounded-3xl shadow-xl p-6 sm:p-8 space-y-6 relative" id="login-card">
-          
-          {/* Restaurant Logo Emblem */}
-          <div className="flex flex-col items-center text-center space-y-3" id="login-header">
-            <div className="h-14 w-14 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 border border-purple-100 shadow-xs relative group overflow-hidden">
-              <div className="absolute inset-0 bg-purple-400/5 rounded-2xl blur-xs group-hover:blur-md transition-all animate-pulse" />
-             <img
-  src="/logo.png"
-  alt="Restaurant Logo"
-  className="h-9 w-9 object-contain relative z-10 scale-125"
-  onError={(e) => {
-    const target = e.currentTarget;
-    target.style.display = 'none';
-    const fallback = target.nextElementSibling as HTMLElement | null;
-    if (fallback) fallback.classList.remove('hidden');
-  }}
-/>
-              <Utensils className="h-7 w-7 relative z-10 hidden" />
-            </div>
-            
-            <div className="space-y-1">
-              <h2 className="text-xl font-black text-slate-900 tracking-tight">Atithi RMS</h2>
-              <h3 className="text-sm font-semibold text-slate-500 pt-1.5">By Cornor Tech Pvt. Ltd.</h3>
-              <p className="text-[10px] text-slate-400 max-w-xs mx-auto">{t.subtitle}</p>
-            </div>
-          </div>
+       <div className="flex flex-col items-center text-center space-y-3" id="login-header">
+  
+  {/* Standalone Logo Centered at Top */}
+  <div className="flex items-center justify-center mb-1">
+    <img
+      src="/logo.png"
+      alt="Restaurant Logo"
+      className="h-16 w-auto object-contain"
+      onError={(e) => {
+        const target = e.currentTarget;
+        target.style.display = 'none';
+        const fallback = target.nextElementSibling as HTMLElement | null;
+        if (fallback) fallback.classList.remove('hidden');
+      }}
+    />
+    <Utensils className="h-12 w-12 text-purple-600 hidden" />
+  </div>
+
+  <div className="space-y-1">
+    <h2 className="text-xl font-black text-slate-900 tracking-tight">Atithi RMS</h2>
+    <h3 className="text-sm font-semibold text-slate-500 pt-1.5">By Cornor Tech Pvt. Ltd.</h3>
+    <p className="text-[10px] text-slate-400 max-w-xs mx-auto">{t.subtitle}</p>
+  </div>
+  
+</div>
 
           {/* Alert messages */}
           {errorMsg && (
