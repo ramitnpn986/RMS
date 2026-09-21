@@ -605,14 +605,18 @@ export default function App() {
 
           {/* Restaurant Brand Identity */}
           <div className="flex items-center gap-2.5" id="sidebar-brand">
-            <div className="h-10 w-10 bg-purple-600 rounded-xl flex items-center justify-center text-white shadow-xs">
-              <Utensils className="h-5 w-5" />
-            </div>
-            <div>
-              <h2 className="text-base font-extrabold text-gray-900 tracking-tight leading-tight">Restaurantss</h2>
-              <span className="text-[10px] font-bold text-purple-600 uppercase tracking-widest block leading-none">{t.location}</span>
-            </div>
-          </div>
+  <div className="h-10 w-10 bg-purple-600 rounded-xl flex items-center justify-center text-white shadow-xs">
+    <Utensils className="h-5 w-5" />
+  </div>
+  <div>
+    <h2 className="text-base font-extrabold text-gray-900 tracking-tight leading-tight">
+     Restaurant
+    </h2>
+    <span className="text-[10px] font-bold text-purple-600 uppercase tracking-widest block leading-none">
+       {activePharmacyName || 'Restaurant'}
+    </span>
+  </div>
+</div>
 
           {/* Tab Navigation links — filtered by staff role access */}
           <nav className="space-y-1" id="sidebar-nav">
