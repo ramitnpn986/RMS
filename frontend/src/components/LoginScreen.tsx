@@ -108,27 +108,27 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
           
           {/* Header & Standalone Top Logo */}
           <div className="flex flex-col items-center text-center space-y-3" id="login-header">
-            <div className="flex items-center justify-center mb-1">
-              <img
-                src="/logo.png"
-                alt="Restaurant Logo"
-                className="h-20 w-auto object-contain"
-                onError={(e) => {
-                  const target = e.currentTarget;
-                  target.style.display = 'none';
-                  const fallback = target.nextElementSibling as HTMLElement | null;
-                  if (fallback) fallback.classList.remove('hidden');
-                }}
-              />
-              <Utensils className="h-12 w-12 text-purple-600 hidden" />
-            </div>
+  {/* Bigger Standalone Logo */}
+  <div className="flex items-center justify-center mb-1">
+    <img
+      src="/logo.png"
+      alt="Restaurant Logo"
+      className="h-32 w-auto object-contain rounded-[10%]"
+      onError={(e) => {
+        const target = e.currentTarget;
+        target.style.display = 'none';
+        const fallback = target.nextElementSibling as HTMLElement | null;
+        if (fallback) fallback.classList.remove('hidden');
+      }}
+    />
+    <Utensils className="h-16 w-16 text-purple-600 hidden" />
+  </div>
 
-            <div className="space-y-1">
-              <h2 className="text-xl font-black text-slate-900 tracking-tight">Atithi RMS</h2>
-              <h3 className="text-sm font-semibold text-slate-500 pt-1.5">By Cornor Tech Pvt. Ltd.</h3>
-              <p className="text-[10px] text-slate-400 max-w-xs mx-auto">{t.subtitle}</p>
-            </div>
-          </div>
+  {/* Subtitle Only */}
+  <div>
+    <p className="text-xs text-slate-400 max-w-xs mx-auto">{t.subtitle}</p>
+  </div>
+</div>
 
           {/* Alert messages */}
           {errorMsg && (
