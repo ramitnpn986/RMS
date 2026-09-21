@@ -5,11 +5,10 @@ import {
   User, 
   Eye, 
   EyeOff, 
-  Globe, 
-  Activity,
-  Building2
+  Building2,
+  Utensils 
 } from 'lucide-react';
-import { Utensils, ChefHat, Soup } from "lucide-react";
+
 interface LoginScreenProps {
   lang: 'en' | 'ne';
   setLang: (l: 'en' | 'ne') => void;
@@ -82,13 +81,8 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
       const data = await response.json();
 
       if (response.ok && data.success) {
-        // index.js login route returns { success, message, user: {...} } — use data.user directly
         const userDetails = data.user;
-
-        // PharmacySettings.jsx reads localStorage.getItem("pharmacyUser"), so this MUST be the key used here
         localStorage.setItem('pharmacyUser', JSON.stringify(userDetails));
-
-        // Forward to App.tsx, which will route based on userDetails.isAdmin / role
         onLoginSuccess(data.token, userDetails);
       } else {
         setErrorMsg(data.message || t.errorHeader);
@@ -101,43 +95,40 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-4 relative overflow-hidden font-sans text-slate-800 selection:bg-purple-100 selection:text-purple-900">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-start pt-16 sm:pt-24 items-center p-4 relative overflow-hidden font-sans text-slate-800 selection:bg-purple-100 selection:text-purple-900">
       
-      {/* Visual background details */}
+      {/* Background glow effects */}
       <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-200/20 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-200/20 blur-[120px] pointer-events-none" />
 
-      {/* Floating Language Switcher */}
-    
-
-      <div className="w-full max-w-md space-y-6 mt-22" id="login-container">
+      <div className="w-full max-w-md space-y-6 mt-6" id="login-container">
         
         {/* Core Auth Card */}
-       <div className="flex flex-col items-center text-center space-y-3" id="login-header">
-  
-  {/* Standalone Logo Centered at Top */}
-  <div className="flex items-center justify-center mb-1">
-    <img
-      src="/logo.png"
-      alt="Restaurant Logo"
-      className="h-16 w-auto object-contain"
-      onError={(e) => {
-        const target = e.currentTarget;
-        target.style.display = 'none';
-        const fallback = target.nextElementSibling as HTMLElement | null;
-        if (fallback) fallback.classList.remove('hidden');
-      }}
-    />
-    <Utensils className="h-12 w-12 text-purple-600 hidden" />
-  </div>
+        <div className="bg-white border border-slate-100 rounded-3xl shadow-xl p-6 sm:p-8 space-y-6 relative" id="login-card">
+          
+          {/* Header & Standalone Top Logo */}
+          <div className="flex flex-col items-center text-center space-y-3" id="login-header">
+            <div className="flex items-center justify-center mb-1">
+              <img
+                src="/logo.png"
+                alt="Restaurant Logo"
+                className="h-16 w-auto object-contain"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  target.style.display = 'none';
+                  const fallback = target.nextElementSibling as HTMLElement | null;
+                  if (fallback) fallback.classList.remove('hidden');
+                }}
+              />
+              <Utensils className="h-12 w-12 text-purple-600 hidden" />
+            </div>
 
-  <div className="space-y-1">
-    <h2 className="text-xl font-black text-slate-900 tracking-tight">Atithi RMS</h2>
-    <h3 className="text-sm font-semibold text-slate-500 pt-1.5">By Cornor Tech Pvt. Ltd.</h3>
-    <p className="text-[10px] text-slate-400 max-w-xs mx-auto">{t.subtitle}</p>
-  </div>
-  
-</div>
+            <div className="space-y-1">
+              <h2 className="text-xl font-black text-slate-900 tracking-tight">Atithi RMS</h2>
+              <h3 className="text-sm font-semibold text-slate-500 pt-1.5">By Cornor Tech Pvt. Ltd.</h3>
+              <p className="text-[10px] text-slate-400 max-w-xs mx-auto">{t.subtitle}</p>
+            </div>
+          </div>
 
           {/* Alert messages */}
           {errorMsg && (
@@ -153,7 +144,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4" id="login-form">
             
-            {/* Pharmacy Name Field */}
+            {/* Restaurant Name Field */}
             <div className="space-y-1.5">
               <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">{t.pharmacyLabel}</label>
               <div className="relative">
@@ -165,7 +156,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
                   onChange={(e) => setPharmacyName(e.target.value)}
                   placeholder={t.pharmacyPlaceholder}
                   disabled={isLoading}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50/55 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-hidden focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-slate-800 font-medium"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50/55 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-slate-800 font-medium"
                 />
               </div>
             </div>
@@ -182,7 +173,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
                   onChange={(e) => setStaffId(e.target.value)}
                   placeholder={t.idPlaceholder}
                   disabled={isLoading}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50/55 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-hidden focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-slate-800 font-medium"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50/55 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-slate-800 font-medium"
                 />
               </div>
             </div>
@@ -199,7 +190,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t.passPlaceholder}
                   disabled={isLoading}
-                  className="w-full pl-10 pr-10 py-2.5 bg-slate-50/55 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-hidden focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-slate-800 font-medium"
+                  className="w-full pl-10 pr-10 py-2.5 bg-slate-50/55 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-slate-800 font-medium"
                 />
                 <button
                   type="button"
@@ -212,22 +203,22 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
             </div>
 
             {/* Submit Button */}
-           <button
-  type="submit"
-  disabled={isLoading}
-  className="w-full py-3 bg-purple-600 hover:bg-purple-500 disabled:bg-slate-100 disabled:text-slate-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-purple-600/10 hover:shadow-purple-600/20 active:scale-[0.98] cursor-pointer mt-2"
->
-  {isLoading ? t.authenticating : t.loginBtn}
-</button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 bg-purple-600 hover:bg-purple-500 disabled:bg-slate-100 disabled:text-slate-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-purple-600/10 hover:shadow-purple-600/20 active:scale-[0.98] cursor-pointer mt-2"
+            >
+              {isLoading ? t.authenticating : t.loginBtn}
+            </button>
           </form>
         </div>
 
         {/* Security watermark footer */}
         <div className="text-center space-y-1 opacity-80">
-  <p className="text-base font-bold text-[#9333EA]">Official IRD verified RMS system</p>
-  <p className="text-[10px] text-slate-400">{t.unauthorizedTip}</p>
-  <p className="text-[9px] font-bold uppercase tracking-wider">{t.envNote}</p>
-</div>
+          <p className="text-base font-bold text-[#9333EA]">Official IRD verified RMS system</p>
+          <p className="text-[10px] text-slate-400">{t.unauthorizedTip}</p>
+          <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{t.envNote}</p>
+        </div>
       </div>
     </div>
   );
