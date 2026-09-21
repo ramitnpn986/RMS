@@ -460,13 +460,8 @@ function MergedBillModal({
 
           <div className="pt-6 border-t border-dashed border-gray-300 text-[9px] space-y-2">
             <div className="text-center italic text-gray-500">Thank you, visit again!</div>
-            <div className="flex justify-between items-end px-2">
-              <div className="text-center font-bold text-gray-400 border-t border-gray-300 pt-1 w-20">
-                Customer Sign
-              </div>
-              <div className="text-center font-bold text-gray-400 border-t border-gray-300 pt-1 w-20">
-                Authorized Sign
-              </div>
+            <div className="text-center font-semibold text-gray-500 pt-1">
+              Powered By: Atithi RMS by Cornor Tech Pvt. Ltd.
             </div>
           </div>
         </div>

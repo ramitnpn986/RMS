@@ -610,7 +610,7 @@ export default function App() {
   </div>
   <div>
     <h2 className="text-base font-extrabold text-gray-900 tracking-tight leading-tight">
-     Restaurant
+    Atithi RMS
     </h2>
     <span className="text-[10px] font-bold text-purple-600 uppercase tracking-widest block leading-none">
        {activePharmacyName || 'Restaurant'}
@@ -1106,18 +1106,13 @@ export default function App() {
               </div>
             )}
 
-            {/* Sign footer block */}
-            <div className="pt-6 border-t border-dashed border-gray-300 text-[9px]">
-              <div className="text-center italic text-gray-500 pb-3">
+            {/* Footer block */}
+            <div className="pt-6 border-t border-dashed border-gray-300 text-[9px] space-y-2 text-center">
+              <div className="italic text-gray-500">
                 Thank you, visit again!
               </div>
-              <div className="flex justify-between items-end px-2">
-                <div className="text-center font-bold text-gray-400 border-t border-gray-300 pt-1 w-20">
-                  Customer Sign
-                </div>
-                <div className="text-center font-bold text-gray-400 border-t border-gray-300 pt-1 w-20">
-                  Authorized Sign
-                </div>
+              <div className="font-semibold text-gray-500">
+                Powered By: Atithi RMS by Cornor Tech Pvt. Ltd.
               </div>
             </div>
           </div>
@@ -1143,7 +1138,6 @@ export default function App() {
         </div>
       </div>
     )}
-
       {/* MOBILE DRAWER OVERLAY */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 md:hidden flex" id="mobile-drawer-overlay">

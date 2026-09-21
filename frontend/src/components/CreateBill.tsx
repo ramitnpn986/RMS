@@ -323,14 +323,9 @@ function BillModal({
               )}
             </div>
 
-            <div className="pt-6 flex justify-between items-end border-t border-dashed border-black text-[9px] font-black">
-              <div className="text-center border-t border-black pt-1 w-20">
-                Customer Sign
-              </div>
-              <div className="text-center">Thank you, visit again!</div>
-              <div className="text-center border-t border-black pt-1 w-20">
-                Auth. Sign
-              </div>
+            <div className="pt-6 border-t border-dashed border-black text-[9px] font-black space-y-1.5 text-center">
+              <div>Thank you, visit again!</div>
+              <div>Powered By: Atithi RMS by Cornor Tech Pvt. Ltd.</div>
             </div>
           </div>
         </div>
