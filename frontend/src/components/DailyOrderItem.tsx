@@ -256,7 +256,7 @@ const handlePrint = () => {
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-4 text-gray-800">
-        Daily Sales (Completed Orders)
+        Daily Sales 
       </h1>
 
       <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
@@ -299,7 +299,7 @@ const handlePrint = () => {
                   <td className="px-4 py-3 text-center">
                     <button
                       onClick={() => handleViewBill(day.date)}
-                      className="inline-flex items-center justify-center p-2 rounded-full hover:bg-orange-100 text-orange-600 transition"
+                      className="inline-flex items-center justify-center p-2 rounded-full hover:bg-purple-100 text-purple-600 transition"
                       title="View day's sales bill"
                     >
                       <Receipt size={18} />
@@ -411,7 +411,7 @@ const handlePrint = () => {
               </button>
               <button
                 onClick={handlePrint}
-                className="flex-1 px-4 py-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700 flex items-center justify-center gap-2 transition"
+                className="flex-1 px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center gap-2 transition"
               >
                 <Printer size={16} />
                 Print
