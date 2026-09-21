@@ -1,6 +1,6 @@
 {
-  "name": "Argya Health",
-  "description": "A polished clinic management and pharmacy POS platform for clinics in Nepal, featuring patient registration, real-time inventory management, purchase orders, and localized VAT billing.",
+  "name": "Restaurant Management System",
+  "description": "A polished Restaurant management platform for Restaurants in Nepal.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
