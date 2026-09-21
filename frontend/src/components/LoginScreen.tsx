@@ -110,7 +110,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
       {/* Floating Language Switcher */}
     
 
-      <div className="w-full max-w-md space-y-6" id="login-container">
+      <div className="w-full max-w-md space-y-6 mt-12" id="login-container">
         
         {/* Core Auth Card */}
         <div className="bg-white border border-slate-100 rounded-3xl shadow-xl p-6 sm:p-8 space-y-6 relative" id="login-card">
