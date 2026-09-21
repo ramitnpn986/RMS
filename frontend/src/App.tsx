@@ -609,7 +609,7 @@ export default function App() {
               <Utensils className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-base font-extrabold text-gray-900 tracking-tight leading-tight">{t.title}</h2>
+              <h2 className="text-base font-extrabold text-gray-900 tracking-tight leading-tight">Restaurantss</h2>
               <span className="text-[10px] font-bold text-purple-600 uppercase tracking-widest block leading-none">{t.location}</span>
             </div>
           </div>
