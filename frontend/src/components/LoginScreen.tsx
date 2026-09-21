@@ -123,9 +123,8 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
 </div>
             
             <div className="space-y-1">
-              <h2 className="text-xl font-black text-slate-900 tracking-tight">{t.viewTitle}</h2>
-              <p className="text-[10px] text-purple-600 uppercase tracking-widest font-extrabold">{t.location}</p>
-              <h3 className="text-sm font-semibold text-slate-500 pt-1.5">{t.portalTitle}</h3>
+              <h2 className="text-xl font-black text-slate-900 tracking-tight">Atithi RMS</h2>
+              <h3 className="text-sm font-semibold text-slate-500 pt-1.5">By Cornor Tech Pvt. Ltd.</h3>
               <p className="text-[10px] text-slate-400 max-w-xs mx-auto">{t.subtitle}</p>
             </div>
           </div>
