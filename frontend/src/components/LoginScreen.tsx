@@ -113,7 +113,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
     <img
       src="/logo.png"
       alt="Restaurant Logo"
-      className="h-32 w-auto object-contain rounded-[10%]"
+      className="h-52 w-auto object-contain rounded-[10%]"
       onError={(e) => {
         const target = e.currentTarget;
         target.style.display = 'none';
