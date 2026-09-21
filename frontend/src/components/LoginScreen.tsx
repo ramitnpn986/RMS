@@ -117,7 +117,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
           
           {/* Medical Icon Emblem */}
           <div className="flex flex-col items-center text-center space-y-3" id="login-header">
-            <div className="h-14 w-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 border border-orange-100 shadow-xs relative group">
+            <div className="h-14 w-14 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 border border-purple-100 shadow-xs relative group">
   <div className="absolute inset-0 bg-purple-400/5 rounded-2xl blur-xs group-hover:blur-md transition-all animate-pulse" />
   <Utensils className="h-7 w-7 relative z-10" />
 </div>
@@ -206,7 +206,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
            <button
   type="submit"
   disabled={isLoading}
-  className="w-full py-3 bg-purple-600 hover:bg-purple-500 disabled:bg-slate-100 disabled:text-slate-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-orange-600/10 hover:shadow-orange-600/20 active:scale-[0.98] cursor-pointer mt-2"
+  className="w-full py-3 bg-purple-600 hover:bg-purple-500 disabled:bg-slate-100 disabled:text-slate-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-purple-600/10 hover:shadow-purple-600/20 active:scale-[0.98] cursor-pointer mt-2"
 >
   {isLoading ? t.authenticating : t.loginBtn}
 </button>
