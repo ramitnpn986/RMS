@@ -27,7 +27,7 @@ const initialForm: FormState = {
 const STATUS_OPTIONS = ["Available", "Occupied", "Reserved", "Out of Service"];
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; dot: string; border: string }> = {
-  Available: { bg: "#ecfdf5", text: "purple-600", dot: "purple-500", border: "#a7f3d0" },
+  Available: { bg: "#ecfdf5", text: "#047857", dot: "#10b981", border: "#a7f3d0" },
   Occupied: { bg: "#fef2f2", text: "#b91c1c", dot: "#ef4444", border: "#fecaca" },
   Reserved: { bg: "#fffbeb", text: "#b45309", dot: "#f59e0b", border: "#fde68a" },
   "Out of Service": { bg: "#f3f4f6", text: "#4b5563", dot: "#9ca3af", border: "#e5e7eb" },
@@ -205,7 +205,7 @@ const Tables: React.FC = () => {
         }}
       >
         <div>
-          <span style={{ fontSize: 13, fontWeight: 700, color: "#purple-600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "#9333EA", textTransform: "uppercase", letterSpacing: "0.5px" }}>
             Billing & VAT Audit
           </span>
           <h1 style={{ fontSize: 28, fontWeight: 800, color: "#111827", margin: "2px 0 4px" }}>
@@ -225,7 +225,7 @@ const Tables: React.FC = () => {
             display: "flex",
             alignItems: "center",
             gap: 8,
-            background: "#purple-600",
+            background: "#9333EA",
             color: "#fff",
             border: "none",
             borderRadius: 12,
@@ -233,7 +233,7 @@ const Tables: React.FC = () => {
             fontWeight: 700,
             fontSize: 15,
             cursor: "pointer",
-            boxShadow: "0 4px 12px rgba(13, 148, 136, 0.2)",
+            boxShadow: "0 4px 12px rgba(147, 51, 234, 0.2)",
             transition: "all 0.2s ease",
           }}
         >
@@ -425,7 +425,7 @@ const Tables: React.FC = () => {
               disabled={submitting}
               style={{
                 padding: "14px 28px",
-                background: "#purple-600",
+                background: "#9333EA",
                 color: "#fff",
                 border: "none",
                 borderRadius: 12,
@@ -536,9 +536,9 @@ const Tables: React.FC = () => {
                     style={{
                       flex: 1,
                       padding: "12px 0",
-                      background: "#f0fdfa",
-                      color: "#purple-600",
-                      border: "1px solid #99f6e4",
+                      background: "#f5f3ff",
+                      color: "#9333EA",
+                      border: "1px solid #e9d5ff",
                       borderRadius: 12,
                       fontWeight: 700,
                       fontSize: 14,
