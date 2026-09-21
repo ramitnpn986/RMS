@@ -95,25 +95,24 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-start pt-16 sm:pt-24 items-center p-4 relative overflow-hidden font-sans text-slate-800 selection:bg-purple-100 selection:text-purple-900">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-start pt-12 sm:pt-16 items-center p-4 relative overflow-hidden font-sans text-slate-800 selection:bg-purple-100 selection:text-purple-900">
       
       {/* Background glow effects */}
       <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-200/20 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-200/20 blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-md space-y-6 mt-6" id="login-container">
+      <div className="w-full max-w-md space-y-4 mt-2" id="login-container">
         
-        {/* Core Auth Card - Top padding removed (`pt-0`) and overflow clipped so logo sits directly at top edge */}
-        <div className="bg-white border border-slate-100 rounded-3xl shadow-xl px-6 pb-6 pt-0 sm:px-8 sm:pb-8 sm:pt-0 space-y-6 relative overflow-hidden" id="login-card">
+        {/* Core Auth Card - Removed top padding and vertical space gaps */}
+        <div className="bg-white border border-slate-100 rounded-3xl shadow-xl px-6 pb-6 pt-0 sm:px-8 sm:pb-8 sm:pt-0 relative overflow-hidden" id="login-card">
           
-          {/* Header & Standalone Top Logo */}
-          <div className="flex flex-col items-center text-center space-y-3" id="login-header">
-            {/* Logo positioned directly at the top card edge with zero top margin */}
+          {/* Header & Standalone Top Logo (Zero bottom margin) */}
+          <div className="flex flex-col items-center text-center m-0 p-0" id="login-header">
             <div className="flex items-center justify-center m-0 p-0">
               <img
                 src="/logo.png"
                 alt="Restaurant Logo"
-                className="h-52 w-auto object-contain rounded-t-2xl"
+                className="h-48 w-auto object-contain rounded-t-2xl block m-0 p-0"
                 onError={(e) => {
                   const target = e.currentTarget;
                   target.style.display = 'none';
@@ -121,13 +120,13 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
                   if (fallback) fallback.classList.remove('hidden');
                 }}
               />
-              <Utensils className="h-16 w-16 text-purple-600 hidden mt-4" />
+              <Utensils className="h-16 w-16 text-purple-600 hidden" />
             </div>
           </div>
 
           {/* Alert messages */}
           {errorMsg && (
-            <div className="p-3.5 bg-red-50 border border-red-100 rounded-2xl text-xs text-red-700 flex gap-2.5 items-start" id="login-error-alert">
+            <div className="my-3 p-3.5 bg-red-50 border border-red-100 rounded-2xl text-xs text-red-700 flex gap-2.5 items-start" id="login-error-alert">
               <ShieldAlert className="h-4.5 w-4.5 text-red-500 shrink-0 mt-0.5" />
               <div className="space-y-0.5">
                 <span className="font-bold block">{t.errorHeader}</span>
@@ -136,8 +135,8 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
             </div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4" id="login-form">
+          {/* Form starting immediately below logo with zero top margin */}
+          <form onSubmit={handleSubmit} className="space-y-4 mt-0" id="login-form">
             
             {/* Restaurant Name Field */}
             <div className="space-y-1.5">
