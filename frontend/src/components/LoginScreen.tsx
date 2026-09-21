@@ -116,10 +116,18 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
         <div className="bg-white border border-slate-100 rounded-3xl shadow-xl p-6 sm:p-8 space-y-6 relative" id="login-card">
           
           {/* Medical Icon Emblem */}
-          <div className="flex flex-col items-center text-center space-y-3" id="login-header">
-            <div className="h-14 w-14 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 border border-purple-100 shadow-xs relative group">
+         <div className="h-14 w-14 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 border border-purple-100 shadow-xs relative group overflow-hidden">
   <div className="absolute inset-0 bg-purple-400/5 rounded-2xl blur-xs group-hover:blur-md transition-all animate-pulse" />
-  <Utensils className="h-7 w-7 relative z-10" />
+  <img
+    src="/athiti.png"
+    alt="Restaurant Logo"
+    className="h-9 w-9 object-contain relative z-10"
+    onError={(e) => {
+      e.currentTarget.style.display = 'none';
+      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+    }}
+  />
+  <Utensils className="h-7 w-7 relative z-10 hidden" />
 </div>
             
             <div className="space-y-1">
