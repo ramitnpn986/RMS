@@ -110,7 +110,7 @@ function InvoiceModal({
       <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl border border-gray-100">
         <div className="flex justify-between items-center border-b border-gray-100 pb-3">
           <span className="font-bold text-gray-900 flex items-center gap-1.5 text-sm">
-            <Receipt className="h-5 w-5 text-teal-600" />
+            <Receipt className="h-5 w-5 text-purple-600" />
             {lang === 'en' ? 'Thermal Invoice' : 'बिजक'}
           </span>
           <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-950 cursor-pointer">
@@ -252,7 +252,7 @@ function InvoiceModal({
           <button
             type="button"
             onClick={() => window.print()}
-            className="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
+            className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
           >
             <Printer className="h-4 w-4" />
             Print Invoice
@@ -350,7 +350,7 @@ export default function BillingManager({
       <div className="space-y-6" id="billing-ledger-card">
         <div className="bg-white rounded-xl border border-gray-200 shadow-xs p-5 space-y-4" id="daily-summary-ledger">
           <h2 className="text-base font-bold text-gray-900 tracking-tight flex items-center gap-1.5 uppercase">
-            <Activity className="h-5 w-5 text-teal-600" />
+            <Activity className="h-5 w-5 text-purple-600" />
             {t.dailySummary}
           </h2>
 
@@ -374,13 +374,13 @@ export default function BillingManager({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-gray-100 pt-3 text-xs text-gray-600" id="daily-vat-summary">
-            <div className="flex justify-between items-center p-3.5 bg-teal-50/20 border border-teal-100 rounded-xl">
-              <span className="font-bold text-teal-800 uppercase tracking-wider text-[10px]">{lang === 'en' ? 'Taxable Revenue' : 'कर योग्य कुल संकलन'}</span>
+            <div className="flex justify-between items-center p-3.5 bg-purple-50/20 border border-purple-100 rounded-xl">
+              <span className="font-bold text-purple-800 uppercase tracking-wider text-[10px]">{lang === 'en' ? 'Taxable Revenue' : 'कर योग्य कुल संकलन'}</span>
               <span className="font-mono font-bold text-gray-900">NPR {totalTaxableToday.toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center p-3.5 bg-indigo-50/20 border border-indigo-100 rounded-xl">
               <span className="font-bold text-indigo-800 uppercase tracking-wider text-[10px]">{t.vatCollected} (VAT)</span>
-              <span className="font-mono font-bold text-teal-700">NPR {totalVatToday.toFixed(2)}</span>
+              <span className="font-mono font-bold text-purple-700">NPR {totalVatToday.toFixed(2)}</span>
             </div>
           </div>
         </div>
@@ -388,11 +388,11 @@ export default function BillingManager({
         <div className="bg-white rounded-xl border border-gray-200 shadow-xs p-5 space-y-4" id="invoices-ledger-panel">
           <div className="flex flex-col sm:flex-row justify-between sm:items-center pb-2 border-b border-gray-100 gap-3">
             <h2 className="text-base font-bold text-gray-900 tracking-tight flex items-center gap-2">
-              <FileText className="h-5 w-5 text-teal-600" />
+              <FileText className="h-5 w-5 text-purple-600" />
               {t.invoiceList}
             </h2>
             {billsLoading ? null : (
-              <button onClick={fetchBills} className="text-[11px] font-bold text-teal-600 hover:text-teal-700 uppercase tracking-wider">
+              <button onClick={fetchBills} className="text-[11px] font-bold text-purple-600 hover:text-purple-700 uppercase tracking-wider">
                 {lang === 'en' ? 'Refresh' : 'ताजा गर्नुहोस्'}
               </button>
             )}
@@ -435,7 +435,7 @@ export default function BillingManager({
                     <td colSpan={7} className="px-4 py-12 text-center text-red-500">
                       <PackageX className="h-6 w-6 mx-auto mb-2" />
                       <p>{billsError}</p>
-                      <button onClick={fetchBills} className="text-teal-600 font-bold text-xs underline mt-1">
+                      <button onClick={fetchBills} className="text-purple-600 font-bold text-xs underline mt-1">
                         {lang === 'en' ? 'Retry' : 'फेरि प्रयास गर्नुहोस्'}
                       </button>
                     </td>
@@ -496,13 +496,13 @@ export default function BillingManager({
                         <td className="px-4 py-3.5 text-right font-mono">
                           NPR {(invoice.vatCollected || 0).toFixed(2)}
                         </td>
-                        <td className="px-4 py-3.5 text-right font-mono font-bold text-teal-700 font-semibold">
+                        <td className="px-4 py-3.5 text-right font-mono font-bold text-purple-700 font-semibold">
                           NPR {invoice.grandTotal.toFixed(2)}
                         </td>
                         <td className="px-4 py-3.5 text-center">
                           <button
                             onClick={() => setViewingBill(invoice)}
-                            className="p-1 hover:bg-gray-100 rounded text-gray-500 hover:text-teal-600"
+                            className="p-1 hover:bg-gray-100 rounded text-gray-500 hover:text-purple-600"
                             title="View/Print Thermal Invoice"
                           >
                             <FileText className="h-4 w-4" />

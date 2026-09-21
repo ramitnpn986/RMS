@@ -315,7 +315,7 @@ const placeOrder = async () => {
       {toast && (
         <div
           className={`fixed top-5 right-5 z-[60] flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg text-xs font-bold text-white animate-fade-in ${
-            toast.type === 'success' ? 'bg-teal-600' : 'bg-red-600'
+            toast.type === 'success' ? 'bg-purple-600' : 'bg-red-600'
           }`}
         >
           {toast.message}
@@ -326,10 +326,10 @@ const placeOrder = async () => {
       <div className="lg:col-span-5 bg-white rounded-xl border border-gray-200 shadow-xs p-5 flex flex-col space-y-4">
         <div className="flex justify-between items-center border-b border-gray-100 pb-3">
           <h2 className="text-lg font-bold text-gray-900 tracking-tight flex items-center gap-2">
-            <ShoppingCart className="h-5 w-5 text-teal-600" />
+            <ShoppingCart className="h-5 w-5 text-purple-600" />
             New Order
           </h2>
-          <span className="bg-teal-50 text-teal-700 px-2.5 py-0.5 rounded-full text-xs font-bold font-mono">
+          <span className="bg-purple-50 text-purple-700 px-2.5 py-0.5 rounded-full text-xs font-bold font-mono">
             {totalItemsCount} items
           </span>
         </div>
@@ -420,11 +420,11 @@ const placeOrder = async () => {
             cart.map((line) => (
               <div
                 key={line.menuItemId}
-                className="p-3 bg-white border border-gray-200 rounded-lg flex items-center justify-between text-xs hover:border-teal-100 transition-all shadow-xs"
+                className="p-3 bg-white border border-gray-200 rounded-lg flex items-center justify-between text-xs hover:border-purple-100 transition-all shadow-xs"
               >
                 <div className="space-y-0.5 max-w-[170px]">
                   <p className="font-bold text-gray-900 leading-tight">{line.name}</p>
-                  <p className="text-[10px] font-mono text-teal-600 font-semibold">
+                  <p className="text-[10px] font-mono text-purple-600 font-semibold">
                     NPR {line.unitPrice.toFixed(2)} each
                   </p>
                 </div>
@@ -476,7 +476,7 @@ const placeOrder = async () => {
         <div className="border-t border-gray-100 pt-3.5">
           <div className="flex justify-between text-sm text-gray-900 font-bold">
             <span>Order Total</span>
-            <span className="font-mono text-teal-700 text-base">
+            <span className="font-mono text-purple-700 text-base">
               NPR {cartTotal.toLocaleString('en-NP', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
@@ -486,7 +486,7 @@ const placeOrder = async () => {
         <button
           onClick={handleReviewOrder}
           disabled={!canOpenConfirm}
-          className="w-full py-3 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
+          className="w-full py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
         >
           <CheckCircle className="h-4.5 w-4.5" />
           Review Order
@@ -516,7 +516,7 @@ const placeOrder = async () => {
             <div className="col-span-2 text-center py-20 text-red-500 space-y-2">
               <PackageX className="h-8 w-8 mx-auto" />
               <p className="text-sm font-medium">{menuError}</p>
-              <button onClick={fetchMenu} className="text-teal-600 font-bold text-xs underline">
+              <button onClick={fetchMenu} className="text-purple-600 font-bold text-xs underline">
                 Retry
               </button>
             </div>
@@ -538,13 +538,13 @@ const placeOrder = async () => {
                   onClick={() => addToCart(item)}
                   className={`p-3.5 text-left border rounded-xl flex flex-col justify-between transition-all group ${
                     inCartLine
-                      ? 'bg-teal-50/20 border-teal-300 ring-1 ring-teal-200'
+                      ? 'bg-purple-50/20 border-purple-300 ring-1 ring-purple-200'
                       : 'bg-white border-gray-200 hover:border-gray-300 shadow-2xs hover:shadow-xs'
                   }`}
                 >
                   <div className="space-y-1 w-full">
                     <div className="flex justify-between items-start">
-                      <span className="font-bold text-gray-900 group-hover:text-teal-700 transition-colors text-sm truncate max-w-[170px]">
+                      <span className="font-bold text-gray-900 group-hover:text-purple-700 transition-colors text-sm truncate max-w-[170px]">
                         {item.name}
                       </span>
                       <span className="text-[10px] text-gray-400 bg-gray-100 px-1 rounded font-mono font-medium">
@@ -561,7 +561,7 @@ const placeOrder = async () => {
                       NPR {item.price.toFixed(2)}
                     </span>
                     {inCartLine && (
-                      <span className="px-2 py-0.5 bg-teal-100 text-teal-700 text-[10px] font-bold rounded">
+                      <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-[10px] font-bold rounded">
                         {inCartLine.quantity} in order
                       </span>
                     )}
@@ -623,7 +623,7 @@ const placeOrder = async () => {
               </div>
               <div className="flex justify-between border-t border-gray-200 pt-2 text-sm font-bold text-gray-900">
                 <span>Total</span>
-                <span className="font-mono text-teal-700">NPR {cartTotal.toFixed(2)}</span>
+                <span className="font-mono text-purple-700">NPR {cartTotal.toFixed(2)}</span>
               </div>
             </div>
 
@@ -652,7 +652,7 @@ const placeOrder = async () => {
                 type="button"
                 onClick={placeOrder}
                 disabled={!confirmChecked || isSubmitting}
-                className="px-6 py-2 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-xs flex items-center gap-1.5"
+                className="px-6 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-xs flex items-center gap-1.5"
               >
                 {isSubmitting ? (
                   <>

@@ -101,8 +101,8 @@ function ServedOrderCard({
         isBilled
           ? 'bg-gray-50 border-gray-150 opacity-50 cursor-not-allowed'
           : isSelected
-          ? 'bg-teal-50 border-teal-400 ring-2 ring-teal-500/20 shadow-sm'
-          : 'bg-white border-gray-200 hover:border-teal-300 hover:shadow-sm cursor-pointer'
+          ? 'bg-purple-50 border-purple-400 ring-2 ring-purple-500/20 shadow-sm'
+          : 'bg-white border-gray-200 hover:border-purple-300 hover:shadow-sm cursor-pointer'
       }`}
     >
       <div className="flex items-start justify-between gap-3">
@@ -131,7 +131,7 @@ function ServedOrderCard({
         </span>
       </div>
 
-      <p className="mt-1 text-right font-mono text-sm font-bold text-teal-700">
+      <p className="mt-1 text-right font-mono text-sm font-bold text-purple-700">
         NPR {money(order.totalAmount)}
       </p>
     </button>
@@ -206,7 +206,7 @@ function BillModal({
       <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl border border-gray-100">
         <div className="flex justify-between items-center border-b border-gray-100 pb-3">
           <span className="font-bold text-gray-900 flex items-center gap-1.5 text-sm">
-            <Receipt className="h-5 w-5 text-teal-600" />
+            <Receipt className="h-5 w-5 text-purple-600" />
             {lang === 'en' ? 'Thermal Invoice' : 'बिजक'}
           </span>
           <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-950 cursor-pointer">
@@ -346,7 +346,7 @@ function BillModal({
           <button
             type="button"
             onClick={() => window.print()}
-            className="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
+            className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
           >
             <Printer className="h-4 w-4" />
             Print Invoice
@@ -628,7 +628,7 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
       {/* Page header */}
       <div className="flex items-center justify-between mb-5 shrink-0">
         <div className="flex items-center gap-2.5">
-          <div className="h-10 w-10 bg-teal-600 rounded-xl flex items-center justify-center text-white shadow-xs">
+          <div className="h-10 w-10 bg-purple-600 rounded-xl flex items-center justify-center text-white shadow-xs">
             <Receipt className="h-5 w-5" />
           </div>
           <div>
@@ -781,7 +781,7 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
                       value={safeDiscountPercent === 0 ? '' : Number(safeDiscountPercent.toFixed(2))}
                       onChange={(e) => handlePercentChange(Number(e.target.value) || 0)}
                       placeholder="0"
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
+                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600"
                     />
                   </div>
 
@@ -797,7 +797,7 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
                       value={discountAmount === 0 ? '' : Number(discountAmount.toFixed(2))}
                       onChange={(e) => handleAmountChange(Number(e.target.value) || 0)}
                       placeholder="0"
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
+                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600"
                     />
                   </div>
 
@@ -813,7 +813,7 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
                       value={vatRate === 0 ? '' : vatRate}
                       onChange={(e) => setVatRate(Number(e.target.value) || 0)}
                       placeholder="0"
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
+                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600"
                     />
                   </div>
                 </div>
@@ -838,7 +838,7 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
                   )}
                   <div className="flex justify-between pt-1.5 mt-1.5 border-t border-gray-150 text-base font-bold text-gray-900">
                     <span>{lang === 'en' ? 'Grand Total' : 'कुल जम्मा'}</span>
-                    <span className="font-mono text-teal-700">NPR {money(grandTotal)}</span>
+                    <span className="font-mono text-purple-700">NPR {money(grandTotal)}</span>
                   </div>
                 </div>
 
@@ -891,7 +891,7 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
                                   onChange={(e) => updateSplitAmount(pm.id, Number(e.target.value))}
                                   placeholder="0.00"
                                   autoFocus
-                                  className={`w-full rounded-lg border px-3 py-2 pl-10 text-sm font-mono focus:outline-none focus:ring-1 ${accent.border} ${accent.ring} focus:border-teal-600 focus:ring-teal-600`}
+                                  className={`w-full rounded-lg border px-3 py-2 pl-10 text-sm font-mono focus:outline-none focus:ring-1 ${accent.border} ${accent.ring} focus:border-purple-600 focus:ring-purple-600`}
                                 />
                               </div>
                               {remainingBalance > 0 && (
@@ -962,7 +962,7 @@ export default function CreateBill({ lang = 'en' as 'en' | 'ne' }: { lang?: 'en'
                 <button
                   onClick={handleCreateBill}
                   disabled={!canCreateBill}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-teal-600 hover:bg-teal-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold py-3 transition-colors shadow-sm cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold py-3 transition-colors shadow-sm cursor-pointer"
                 >
                   {submitting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

@@ -337,19 +337,19 @@ export default function Dashboard({
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 pb-5" id="dashboard-header">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-            <Activity className="h-6 w-6 text-teal-600" id="activity-icon" />
+            <Activity className="h-6 w-6 text-purple-600" id="activity-icon" />
             {t.statsOverview}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
             {t.location} • {lang === 'en' ? 'Live System Feed' : 'लाइभ फिड'}
           </p>
         </div>
-        <div className="mt-3 sm:mt-0 px-4 py-2 bg-teal-50/60 rounded-full text-xs font-semibold text-teal-900 flex items-center gap-2 border border-teal-100/80 transition-all hover:bg-teal-50 shadow-xs" id="dashboard-date">
+        <div className="mt-3 sm:mt-0 px-4 py-2 bg-purple-50/60 rounded-full text-xs font-semibold text-purple-900 flex items-center gap-2 border border-purple-100/80 transition-all hover:bg-purple-50 shadow-xs" id="dashboard-date">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
           </span>
-          <Calendar className="h-3.5 w-3.5 text-teal-600 shrink-0" />
+          <Calendar className="h-3.5 w-3.5 text-purple-600 shrink-0" />
           <span className="font-mono text-xs">{formatDateTime(time)}</span>
         </div>
       </div>
@@ -366,7 +366,7 @@ export default function Dashboard({
               {billsLoading ? '...' : `NPR ${dailyRevenue.toLocaleString('en-NP', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
             </h3>
           </div>
-          <div className="p-3 bg-teal-50 rounded-lg text-teal-600">
+          <div className="p-3 bg-purple-50 rounded-lg text-purple-600">
             <TrendingUp className="h-6 w-6" />
           </div>
         </div>
@@ -450,7 +450,7 @@ export default function Dashboard({
                     <td colSpan={5} className="px-4 py-8 text-center text-red-500">
                       <PackageX className="h-5 w-5 mx-auto mb-1" />
                       {billsError}
-                      <button onClick={() => fetchBills(restaurantId)} className="block mx-auto mt-1 text-teal-600 font-bold text-xs underline">
+                      <button onClick={() => fetchBills(restaurantId)} className="block mx-auto mt-1 text-purple-600 font-bold text-xs underline">
                         {lang === 'en' ? 'Retry' : 'फेरि प्रयास गर्नुहोस्'}
                       </button>
                     </td>
@@ -514,17 +514,17 @@ export default function Dashboard({
     <div className="grid grid-cols-1 gap-2">
       <button
         onClick={() => setView('inventory')}
-        className="w-full py-2.5 px-3 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg text-sm flex items-center justify-between transition-colors shadow-xs"
+        className="w-full py-2.5 px-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg text-sm flex items-center justify-between transition-colors shadow-xs"
       >
         <span>{lang === 'en' ? 'Menu' : 'मेनु'}</span>
         <UtensilsCrossed className="h-4 w-4" />
       </button>
       <button
         onClick={() => setView('createbill')}
-        className="w-full py-2.5 px-3 bg-white hover:bg-gray-50 text-teal-700 font-medium rounded-lg text-sm flex items-center justify-between transition-colors border border-gray-200"
+        className="w-full py-2.5 px-3 bg-white hover:bg-gray-50 text-purple-700 font-medium rounded-lg text-sm flex items-center justify-between transition-colors border border-gray-200"
       >
         <span>{lang === 'en' ? 'Create Bill' : 'बिल बनाउनुहोस्'}</span>
-        <Receipt className="h-4 w-4 text-teal-600" />
+        <Receipt className="h-4 w-4 text-purple-600" />
       </button>
       <button
         onClick={() => setView('tables')}

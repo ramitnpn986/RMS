@@ -333,7 +333,7 @@ export default function MenuManager({ lang, currentUserRole }: MenuManagerProps)
       {toast && (
         <div
           className={`fixed top-5 right-5 z-[60] flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg text-xs font-bold text-white animate-fade-in ${
-            toast.type === 'success' ? 'bg-teal-600' : 'bg-red-600'
+            toast.type === 'success' ? 'bg-purple-600' : 'bg-red-600'
           }`}
         >
           {toast.type === 'success' ? (
@@ -352,13 +352,13 @@ export default function MenuManager({ lang, currentUserRole }: MenuManagerProps)
       >
         <div className="flex flex-col sm:flex-row justify-between sm:items-center pb-2 border-b border-gray-100 gap-3">
           <h2 className="text-lg font-bold text-gray-900 tracking-tight flex items-center gap-2">
-            <Database className="h-5 w-5 text-teal-600" />
+            <Database className="h-5 w-5 text-purple-600" />
             {lang === 'en' ? 'Menu Management' : 'मेनु व्यवस्थापन'}
           </h2>
 
           <button
             onClick={openAddModal}
-            className="py-1.5 px-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs"
+            className="py-1.5 px-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs"
           >
             <Plus className="h-4 w-4" />
             {lang === 'en' ? 'Add Menu Item' : 'मेनु वस्तु थप्नुहोस्'}
@@ -407,7 +407,7 @@ export default function MenuManager({ lang, currentUserRole }: MenuManagerProps)
             <button
               onClick={() => setStatusFilter('Available')}
               className={`px-3 py-1.5 rounded-md font-medium flex items-center gap-1.5 transition-colors ${
-                statusFilter === 'Available' ? 'bg-teal-600 text-white shadow-2xs font-bold' : 'text-gray-500 hover:text-teal-600'
+                statusFilter === 'Available' ? 'bg-purple-600 text-white shadow-2xs font-bold' : 'text-gray-500 hover:text-purple-600'
               }`}
             >
               <CheckCircle2 className="h-3.5 w-3.5" />
@@ -453,7 +453,7 @@ export default function MenuManager({ lang, currentUserRole }: MenuManagerProps)
                     {loadError}
                     <button
                       onClick={fetchMenuItems}
-                      className="block mx-auto mt-2 text-teal-600 font-bold underline"
+                      className="block mx-auto mt-2 text-purple-600 font-bold underline"
                     >
                       {lang === 'en' ? 'Retry' : 'फेरि प्रयास गर्नुहोस्'}
                     </button>
@@ -479,8 +479,8 @@ export default function MenuManager({ lang, currentUserRole }: MenuManagerProps)
                     <tr
                       key={item._id}
                       onClick={() => setSelectedMenuItem(item)}
-                      className={`hover:bg-teal-50/10 cursor-pointer transition-colors ${
-                        selectedMenuItem?._id === item._id ? 'bg-teal-50/30' : ''
+                      className={`hover:bg-purple-50/10 cursor-pointer transition-colors ${
+                        selectedMenuItem?._id === item._id ? 'bg-purple-50/30' : ''
                       }`}
                     >
                       <td className="px-4 py-3.5">
@@ -501,7 +501,7 @@ export default function MenuManager({ lang, currentUserRole }: MenuManagerProps)
                         <span
                           className={`inline-flex px-2 py-0.5 text-[9px] font-bold rounded uppercase tracking-wider ${
                             item.status === 'Available'
-                              ? 'bg-teal-100 text-teal-800'
+                              ? 'bg-purple-100 text-purple-800'
                               : item.status === 'Sold Out'
                               ? 'bg-red-100 text-red-700'
                               : 'bg-gray-100 text-gray-600'
@@ -521,7 +521,7 @@ export default function MenuManager({ lang, currentUserRole }: MenuManagerProps)
                             <button
                               onClick={() => openEditModal(item)}
                               title={lang === 'en' ? 'Edit' : 'सम्पादन गर्नुहोस्'}
-                              className="p-1.5 rounded-md hover:bg-teal-50 text-teal-600 transition-colors"
+                              className="p-1.5 rounded-md hover:bg-purple-50 text-purple-600 transition-colors"
                             >
                               <Pencil className="h-3.5 w-3.5" />
                             </button>
@@ -558,7 +558,7 @@ export default function MenuManager({ lang, currentUserRole }: MenuManagerProps)
                 <h3 className="text-base font-bold text-gray-900 leading-tight">
                   {selectedMenuItem.itemName}
                 </h3>
-                <p className="text-xs text-teal-600 font-bold">{selectedMenuItem.category}</p>
+                <p className="text-xs text-purple-600 font-bold">{selectedMenuItem.category}</p>
               </div>
               <button
                 onClick={() => setSelectedMenuItem(null)}
@@ -590,7 +590,7 @@ export default function MenuManager({ lang, currentUserRole }: MenuManagerProps)
                 </span>
                 <span
                   className={`font-bold ${
-                    selectedMenuItem.status === 'Available' ? 'text-teal-700' : 'text-red-600'
+                    selectedMenuItem.status === 'Available' ? 'text-purple-700' : 'text-red-600'
                   }`}
                 >
                   {selectedMenuItem.status}
@@ -610,7 +610,7 @@ export default function MenuManager({ lang, currentUserRole }: MenuManagerProps)
               <div className="border-t border-gray-100 pt-4 flex gap-2">
                 <button
                   onClick={() => openEditModal(selectedMenuItem)}
-                  className="flex-1 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold text-[11px] uppercase tracking-wider rounded-lg flex items-center justify-center gap-1.5 transition-colors"
+                  className="flex-1 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] uppercase tracking-wider rounded-lg flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                   {lang === 'en' ? 'Edit' : 'सम्पादन गर्नुहोस्'}
@@ -683,7 +683,7 @@ export default function MenuManager({ lang, currentUserRole }: MenuManagerProps)
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl border border-gray-100 animate-scale-in max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-gray-100 pb-3">
               <h3 className="text-base font-bold text-gray-900 flex items-center gap-1.5">
-                <Database className="h-5 w-5 text-teal-600" />
+                <Database className="h-5 w-5 text-purple-600" />
                 {formMode === 'edit'
                   ? lang === 'en'
                     ? 'Edit Menu Item'
@@ -822,7 +822,7 @@ export default function MenuManager({ lang, currentUserRole }: MenuManagerProps)
                 <button
                   type="submit"
                   disabled={submitting || !formData.itemName || !formData.description || !formData.price}
-                  className="px-6 py-2 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-200 disabled:text-gray-400 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-xs flex items-center gap-2"
+                  className="px-6 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-200 disabled:text-gray-400 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-xs flex items-center gap-2"
                 >
                   {submitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                   {formMode === 'edit'

@@ -101,10 +101,10 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-4 relative overflow-hidden font-sans text-slate-800 selection:bg-teal-100 selection:text-teal-900">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-4 relative overflow-hidden font-sans text-slate-800 selection:bg-purple-100 selection:text-purple-900">
       
       {/* Visual background details */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-teal-200/20 blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-200/20 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-200/20 blur-[120px] pointer-events-none" />
 
       {/* Floating Language Switcher */}
@@ -124,7 +124,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
             
             <div className="space-y-1">
               <h2 className="text-xl font-black text-slate-900 tracking-tight">{t.viewTitle}</h2>
-              <p className="text-[10px] text-teal-600 uppercase tracking-widest font-extrabold">{t.location}</p>
+              <p className="text-[10px] text-purple-600 uppercase tracking-widest font-extrabold">{t.location}</p>
               <h3 className="text-sm font-semibold text-slate-500 pt-1.5">{t.portalTitle}</h3>
               <p className="text-[10px] text-slate-400 max-w-xs mx-auto">{t.subtitle}</p>
             </div>
@@ -156,7 +156,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
                   onChange={(e) => setPharmacyName(e.target.value)}
                   placeholder={t.pharmacyPlaceholder}
                   disabled={isLoading}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50/55 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-hidden focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all text-slate-800 font-medium"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50/55 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-hidden focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-slate-800 font-medium"
                 />
               </div>
             </div>
@@ -173,7 +173,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
                   onChange={(e) => setStaffId(e.target.value)}
                   placeholder={t.idPlaceholder}
                   disabled={isLoading}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50/55 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-hidden focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all text-slate-800 font-medium"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50/55 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-hidden focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-slate-800 font-medium"
                 />
               </div>
             </div>
@@ -190,7 +190,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t.passPlaceholder}
                   disabled={isLoading}
-                  className="w-full pl-10 pr-10 py-2.5 bg-slate-50/55 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-hidden focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all text-slate-800 font-medium"
+                  className="w-full pl-10 pr-10 py-2.5 bg-slate-50/55 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-hidden focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-slate-800 font-medium"
                 />
                 <button
                   type="button"
@@ -206,7 +206,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
            <button
   type="submit"
   disabled={isLoading}
-  className="w-full py-3 bg-teal-600 hover:bg-teal-500 disabled:bg-slate-100 disabled:text-slate-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-orange-600/10 hover:shadow-orange-600/20 active:scale-[0.98] cursor-pointer mt-2"
+  className="w-full py-3 bg-purple-600 hover:bg-purple-500 disabled:bg-slate-100 disabled:text-slate-400 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-orange-600/10 hover:shadow-orange-600/20 active:scale-[0.98] cursor-pointer mt-2"
 >
   {isLoading ? t.authenticating : t.loginBtn}
 </button>

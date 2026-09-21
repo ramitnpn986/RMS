@@ -469,12 +469,12 @@ const handleCreateStaff = async (e: React.FormEvent) => {
       {/* Upper Navigation Canopy */}
       <nav className="bg-white border-b border-slate-200/80 sticky top-0 z-50 px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="h-11 w-11 bg-teal-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-teal-600/20">
+          <div className="h-11 w-11 bg-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-purple-600/20">
             <ShieldCheck className="h-5 w-5" />
           </div>
           <div>
             <h1 className="text-xl font-extrabold tracking-tight text-slate-900">{t?.dashTitle || "Admin Dashboard"}</h1>
-            <p className="text-xs text-slate-500 font-medium">{t.welcome} <span className="text-teal-600 font-bold">{user.pharmacyName}</span></p>
+            <p className="text-xs text-slate-500 font-medium">{t.welcome} <span className="text-purple-600 font-bold">{user.pharmacyName}</span></p>
           </div>
         </div>
 
@@ -505,14 +505,14 @@ const handleCreateStaff = async (e: React.FormEvent) => {
           <div className="bg-white rounded-3xl border border-slate-200/60 shadow-xs p-6 space-y-5">
             <div className="flex justify-between items-center flex-wrap gap-2">
               <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-teal-600" /> System Registries
+                <Building2 className="h-4 w-4 text-purple-600" /> System Registries
               </h2>
               <button 
                 onClick={fetchAllPharmacies}
-                className="p-2 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all cursor-pointer text-slate-500 hover:text-teal-600"
+                className="p-2 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all cursor-pointer text-slate-500 hover:text-purple-600"
                 title="Refresh Database Connection"
               >
-                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin text-teal-600' : ''}`} />
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin text-purple-600' : ''}`} />
               </button>
             </div>
 
@@ -524,7 +524,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                 placeholder={t.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 transition-all placeholder-slate-400 font-medium"
+                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 transition-all placeholder-slate-400 font-medium"
               />
             </div>
 
@@ -545,7 +545,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                     filteredPharmacies.map((pharm) => (
                       <tr key={pharm._id} className="hover:bg-slate-50/60 transition-colors">
                         <td 
-                          className="p-4 font-bold text-slate-900 text-sm cursor-pointer hover:text-teal-600 underline"
+                          className="p-4 font-bold text-slate-900 text-sm cursor-pointer hover:text-purple-600 underline"
                           onClick={() => openPharmacyDetails(pharm.pharmacyName)}
                         >
                           {pharm.pharmacyName}
@@ -568,7 +568,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                         <td className="p-4 text-right space-x-2 whitespace-nowrap">
                           <button 
                             onClick={() => startEditMode(pharm)}
-                            className="p-2 bg-slate-50 hover:bg-teal-50 text-slate-600 hover:text-teal-700 border border-slate-200 hover:border-teal-200 rounded-xl transition-all cursor-pointer inline-flex items-center"
+                            className="p-2 bg-slate-50 hover:bg-purple-50 text-slate-600 hover:text-purple-700 border border-slate-200 hover:border-purple-200 rounded-xl transition-all cursor-pointer inline-flex items-center"
                           >
                             <Edit3 className="h-3.5 w-3.5" />
                           </button>
@@ -598,7 +598,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
         <div className="lg:col-span-1">
           <div className="bg-white rounded-3xl border border-slate-200/60 shadow-xs p-6 space-y-5 sticky top-24">
             <div>
-              <div className="h-9 w-9 bg-teal-50 text-teal-700 rounded-xl flex items-center justify-center mb-3">
+              <div className="h-9 w-9 bg-purple-50 text-purple-700 rounded-xl flex items-center justify-center mb-3">
                 {isEditing ? <Edit3 className="h-4.5 w-4.5" /> : <Plus className="h-5 w-5" />}
               </div>
               <h2 className="text-base font-bold text-slate-900 tracking-tight">
@@ -619,7 +619,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                     placeholder="e.g. Everest Kitchen"
                     value={formPharmacyName}
                     onChange={(e) => setFormPharmacyName(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-teal-500 transition-all font-medium"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-purple-500 transition-all font-medium"
                   />
                 </div>
               </div>
@@ -635,7 +635,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                     placeholder="Alphanumeric code string"
                     value={formId}
                     onChange={(e) => setFormId(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-teal-500 transition-all font-mono font-medium disabled:bg-slate-100 disabled:text-slate-400"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-purple-500 transition-all font-mono font-medium disabled:bg-slate-100 disabled:text-slate-400"
                   />
                 </div>
               </div>
@@ -652,7 +652,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                     placeholder={isEditing ? "•••••••• (Preserve current)" : "Minimum 6 credentials"}
                     value={formPassword}
                     onChange={(e) => setFormPassword(e.target.value)}
-                    className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-teal-500 transition-all font-medium"
+                    className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-purple-500 transition-all font-medium"
                   />
                   <button
                     type="button"
@@ -678,7 +678,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                     placeholder="e.g. 98XXXXXXXX"
                     value={formPhone}
                     onChange={(e) => setFormPhone(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-teal-500 transition-all font-medium"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-purple-500 transition-all font-medium"
                   />
                 </div>
               </div>
@@ -693,7 +693,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                     placeholder="e.g. Restaurant@example.com"
                     value={formEmail}
                     onChange={(e) => setFormEmail(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-teal-500 transition-all font-medium"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-purple-500 transition-all font-medium"
                   />
                 </div>
               </div>
@@ -708,7 +708,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                     placeholder="e.g. Kathmandu, Nepal"
                     value={formLocation}
                     onChange={(e) => setFormLocation(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-teal-500 transition-all font-medium"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-purple-500 transition-all font-medium"
                   />
                 </div>
               </div>
@@ -722,7 +722,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                     placeholder="e.g. 600123456"
                     value={formPanOrVat}
                     onChange={(e) => setFormPanOrVat(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-teal-500 transition-all font-medium"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-purple-500 transition-all font-medium"
                   />
                 </div>
               </div>
@@ -738,7 +738,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                     id="isActiveToggle"
                     checked={formIsActive}
                     onChange={(e) => setFormIsActive(e.target.checked)}
-                    className="w-4 h-4 rounded-md border-slate-300 text-teal-600 focus:ring-teal-500/20 h-5 w-5 accent-teal-600 cursor-pointer"
+                    className="w-4 h-4 rounded-md border-slate-300 text-purple-600 focus:ring-purple-500/20 h-5 w-5 accent-purple-600 cursor-pointer"
                   />
                 </div>
               )}
@@ -746,7 +746,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
               <div className="space-y-2 pt-2">
                 <button
                   type="submit"
-                  className="w-full py-3 bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-teal-600/10 hover:shadow-lg hover:shadow-teal-600/20 active:scale-[0.99] cursor-pointer"
+                  className="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-purple-600/10 hover:shadow-lg hover:shadow-purple-600/20 active:scale-[0.99] cursor-pointer"
                 >
                   {isEditing ? t.submitUpdate : t.submitCreate}
                 </button>
@@ -795,14 +795,14 @@ const handleCreateStaff = async (e: React.FormEvent) => {
               <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200 shadow-xs">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                    <User className="h-4 w-4 text-teal-600" /> Staff Directory
+                    <User className="h-4 w-4 text-purple-600" /> Staff Directory
                   </h3>
                   <button
                     onClick={() => fetchStaffForPharmacy(selectedPharmacy)}
-                    className="p-2 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all cursor-pointer text-slate-500 hover:text-teal-600"
+                    className="p-2 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all cursor-pointer text-slate-500 hover:text-purple-600"
                     title="Refresh"
                   >
-                    <RefreshCw className={`h-4 w-4 ${isStaffLoading ? 'animate-spin text-teal-600' : ''}`} />
+                    <RefreshCw className={`h-4 w-4 ${isStaffLoading ? 'animate-spin text-purple-600' : ''}`} />
                   </button>
                 </div>
 
@@ -835,7 +835,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                             <td className="p-3 text-right space-x-2 whitespace-nowrap">
                               <button
                                 onClick={() => startStaffEditMode(staff)}
-                                className="p-2 bg-slate-50 hover:bg-teal-50 text-slate-600 hover:text-teal-700 border border-slate-200 hover:border-teal-200 rounded-xl transition-all cursor-pointer inline-flex items-center"
+                                className="p-2 bg-slate-50 hover:bg-purple-50 text-slate-600 hover:text-purple-700 border border-slate-200 hover:border-purple-200 rounded-xl transition-all cursor-pointer inline-flex items-center"
                               >
                                 <Edit3 className="h-3.5 w-3.5" />
                               </button>
@@ -863,7 +863,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
               {/* Create / Edit Staff Form */}
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-5">
                 <div>
-                  <div className="h-9 w-9 bg-teal-50 text-teal-700 rounded-xl flex items-center justify-center mb-3">
+                  <div className="h-9 w-9 bg-purple-50 text-purple-700 rounded-xl flex items-center justify-center mb-3">
                     {isStaffEditing ? <Edit3 className="h-4.5 w-4.5" /> : <UserPlus className="h-5 w-5" />}
                   </div>
                   <h3 className="text-base font-bold text-slate-900 tracking-tight">
@@ -885,7 +885,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                         placeholder="e.g. Ramesh Sharma"
                         value={staffFormName}
                         onChange={(e) => setStaffFormName(e.target.value)}
-                        className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-teal-500 transition-all font-medium"
+                        className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-purple-500 transition-all font-medium"
                       />
                     </div>
                   </div>
@@ -900,7 +900,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                         placeholder="Alphanumeric code string"
                         value={staffFormId}
                         onChange={(e) => setStaffFormId(e.target.value)}
-                        className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-teal-500 transition-all font-mono font-medium"
+                        className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-purple-500 transition-all font-mono font-medium"
                       />
                     </div>
                   </div>
@@ -917,7 +917,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                         placeholder={isStaffEditing ? "•••••••• (Preserve current)" : "Minimum 6 credentials"}
                         value={staffFormPassword}
                         onChange={(e) => setStaffFormPassword(e.target.value)}
-                        className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-teal-500 transition-all font-medium"
+                        className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-purple-500 transition-all font-medium"
                       />
                       <button
                         type="button"
@@ -934,7 +934,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                     <select
                       value={staffFormRole}
                       onChange={(e) => setStaffFormRole(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-teal-500 transition-all font-medium"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-purple-500 transition-all font-medium"
                     >
                       {STAFF_ROLES.map((role) => (
                         <option key={role} value={role}>{role}</option>
@@ -951,7 +951,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                       type="checkbox"
                       checked={staffFormIsActive}
                       onChange={(e) => setStaffFormIsActive(e.target.checked)}
-                      className="w-4 h-4 rounded-md border-slate-300 text-teal-600 focus:ring-teal-500/20 h-5 w-5 accent-teal-600 cursor-pointer"
+                      className="w-4 h-4 rounded-md border-slate-300 text-purple-600 focus:ring-purple-500/20 h-5 w-5 accent-purple-600 cursor-pointer"
                     />
                   </div>
 
@@ -959,7 +959,7 @@ const handleCreateStaff = async (e: React.FormEvent) => {
                     <button
                       type="button"
                        onClick={isStaffEditing ? handleUpdateStaff : handleCreateStaff}
-                        className="w-full py-3 bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-teal-600/10 hover:shadow-lg hover:shadow-teal-600/20 active:scale-[0.99] cursor-pointer"
+                        className="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-purple-600/10 hover:shadow-lg hover:shadow-purple-600/20 active:scale-[0.99] cursor-pointer"
 >
                           {isStaffEditing ? 'Save Changes' : 'Create Staff Account'}
                     </button>

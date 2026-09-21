@@ -40,14 +40,14 @@ const STATUS_STYLES = {
   Pending: 'bg-amber-50 text-amber-700 border-amber-200',
   Preparing: 'bg-blue-50 text-blue-700 border-blue-200',
   Ready: 'bg-purple-50 text-purple-700 border-purple-200',
-  Served: 'bg-teal-50 text-teal-700 border-teal-200',
+  Served: 'bg-purple-50 text-purple-700 border-purple-200',
   Completed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   Cancelled: 'bg-red-50 text-red-700 border-red-200',
 };
 
 const PAYMENT_STYLES = {
   Unpaid: 'bg-gray-100 text-gray-600',
-  Paid: 'bg-teal-100 text-teal-700',
+  Paid: 'bg-purple-100 text-purple-700',
   Refunded: 'bg-orange-100 text-orange-700',
 };
 
@@ -381,7 +381,7 @@ export default function OrdersPage() {
       {toast && (
         <div
           className={`fixed top-5 right-5 z-[60] flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg text-xs font-bold text-white animate-fade-in ${
-            toast.type === 'success' ? 'bg-teal-600' : 'bg-red-600'
+            toast.type === 'success' ? 'bg-purple-600' : 'bg-red-600'
           }`}
         >
           {toast.message}
@@ -450,7 +450,7 @@ export default function OrdersPage() {
         <div className="text-center py-24 text-red-500 space-y-2">
           <PackageX className="h-8 w-8 mx-auto" />
           <p className="text-sm font-medium">{error}</p>
-          <button onClick={fetchOrders} className="text-teal-600 font-bold text-xs underline">
+          <button onClick={fetchOrders} className="text-purple-600 font-bold text-xs underline">
             Retry
           </button>
         </div>
@@ -527,7 +527,7 @@ export default function OrdersPage() {
                   >
                     {order.paymentStatus}
                   </span>
-                  <span className="font-mono font-bold text-teal-700 text-sm">
+                  <span className="font-mono font-bold text-purple-700 text-sm">
                     NPR {Number(order.totalAmount).toFixed(2)}
                   </span>
                 </div>
@@ -538,7 +538,7 @@ export default function OrdersPage() {
                     <button
                       onClick={() => updateOrderStatus(order, 'Served')}
                       disabled={isUpdating}
-                      className="flex-1 py-2 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-100 disabled:text-gray-400 text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5"
+                      className="flex-1 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-100 disabled:text-gray-400 text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5"
                     >
                       {isUpdating ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -584,7 +584,7 @@ export default function OrdersPage() {
             <div className="flex justify-between items-center border-b border-gray-100 px-5 py-4 shrink-0">
               <div>
                 <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                  <ShoppingCart className="h-4.5 w-4.5 text-teal-600" />
+                  <ShoppingCart className="h-4.5 w-4.5 text-purple-600" />
                   Edit Order — {editingOrder.customerName}
                 </h2>
                 <p className="text-[11px] text-gray-500 mt-0.5">
@@ -607,7 +607,7 @@ export default function OrdersPage() {
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                     Order Items
                   </span>
-                  <span className="bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full text-[10px] font-bold font-mono">
+                  <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full text-[10px] font-bold font-mono">
                     {editItemsCount} items
                   </span>
                 </div>
@@ -635,11 +635,11 @@ export default function OrdersPage() {
                     editCart.map((line) => (
                       <div
                         key={line.lineKey}
-                        className="p-3 bg-white border border-gray-200 rounded-lg flex items-center justify-between text-xs hover:border-teal-100 transition-all shadow-xs"
+                        className="p-3 bg-white border border-gray-200 rounded-lg flex items-center justify-between text-xs hover:border-purple-100 transition-all shadow-xs"
                       >
                         <div className="space-y-0.5 max-w-[140px]">
                           <p className="font-bold text-gray-900 leading-tight">{line.name}</p>
-                          <p className="text-[10px] font-mono text-teal-600 font-semibold">
+                          <p className="text-[10px] font-mono text-purple-600 font-semibold">
                             NPR {line.unitPrice.toFixed(2)} each
                           </p>
                         </div>
@@ -687,7 +687,7 @@ export default function OrdersPage() {
                 <div className="border-t border-gray-100 pt-3">
                   <div className="flex justify-between text-sm text-gray-900 font-bold">
                     <span>Order Total</span>
-                    <span className="font-mono text-teal-700 text-base">
+                    <span className="font-mono text-purple-700 text-base">
                       NPR {editCartTotal.toLocaleString('en-NP', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                   </div>
@@ -696,7 +696,7 @@ export default function OrdersPage() {
                 <button
                   onClick={handleReviewEdit}
                   disabled={editCart.length === 0 || isSavingEdit}
-                  className="w-full py-2.5 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
                 >
                   <CheckCircle className="h-4 w-4" />
                   Review & Save Changes
@@ -726,7 +726,7 @@ export default function OrdersPage() {
                     <div className="col-span-2 text-center py-16 text-red-500 space-y-2">
                       <PackageX className="h-7 w-7 mx-auto" />
                       <p className="text-xs font-medium">{menuError}</p>
-                      <button onClick={fetchMenu} className="text-teal-600 font-bold text-xs underline">
+                      <button onClick={fetchMenu} className="text-purple-600 font-bold text-xs underline">
                         Retry
                       </button>
                     </div>
@@ -744,13 +744,13 @@ export default function OrdersPage() {
                           onClick={() => addMenuItemToEditCart(item)}
                           className={`p-3 text-left border rounded-xl flex flex-col justify-between transition-all group ${
                             inCartLine
-                              ? 'bg-teal-50/20 border-teal-300 ring-1 ring-teal-200'
+                              ? 'bg-purple-50/20 border-purple-300 ring-1 ring-purple-200'
                               : 'bg-white border-gray-200 hover:border-gray-300 shadow-2xs hover:shadow-xs'
                           }`}
                         >
                           <div className="space-y-1 w-full">
                             <div className="flex justify-between items-start">
-                              <span className="font-bold text-gray-900 group-hover:text-teal-700 transition-colors text-xs truncate max-w-[150px]">
+                              <span className="font-bold text-gray-900 group-hover:text-purple-700 transition-colors text-xs truncate max-w-[150px]">
                                 {item.name}
                               </span>
                               <span className="text-[9px] text-gray-400 bg-gray-100 px-1 rounded font-mono font-medium">
@@ -767,7 +767,7 @@ export default function OrdersPage() {
                               NPR {item.price.toFixed(2)}
                             </span>
                             {inCartLine && (
-                              <span className="px-1.5 py-0.5 bg-teal-100 text-teal-700 text-[9px] font-bold rounded">
+                              <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[9px] font-bold rounded">
                                 {inCartLine.quantity} in order
                               </span>
                             )}
@@ -837,7 +837,7 @@ export default function OrdersPage() {
               </div>
               <div className="flex justify-between border-t border-gray-200 pt-2 text-sm font-bold text-gray-900">
                 <span>Total</span>
-                <span className="font-mono text-teal-700">NPR {editCartTotal.toFixed(2)}</span>
+                <span className="font-mono text-purple-700">NPR {editCartTotal.toFixed(2)}</span>
               </div>
             </div>
 
@@ -866,7 +866,7 @@ export default function OrdersPage() {
                 type="button"
                 onClick={saveEditedOrder}
                 disabled={!editConfirmChecked || isSavingEdit}
-                className="px-6 py-2 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-xs flex items-center gap-1.5"
+                className="px-6 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors shadow-xs flex items-center gap-1.5"
               >
                 {isSavingEdit ? (
                   <>
