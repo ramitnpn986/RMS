@@ -106,20 +106,20 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
         {/* Core Auth Card */}
         <div className="bg-white border border-slate-100 rounded-3xl shadow-xl p-6 sm:p-8 space-y-6 relative" id="login-card">
           
-          {/* Header & Standalone Circular Logo */}
+          {/* Header & Standalone Top Logo */}
           <div className="flex flex-col items-center text-center space-y-3" id="login-header">
             <div className="flex items-center justify-center mb-1">
-             <img
-  src="/logo.png"
-  alt="Restaurant Logo"
-  className="h-16 w-16 object-cover rounded-[10%]"
-  onError={(e) => {
-    const target = e.currentTarget;
-    target.style.display = 'none';
-    const fallback = target.nextElementSibling as HTMLElement | null;
-    if (fallback) fallback.classList.remove('hidden');
-  }}
-/>
+              <img
+                src="/logo.png"
+                alt="Restaurant Logo"
+                className="h-16 w-auto object-contain"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  target.style.display = 'none';
+                  const fallback = target.nextElementSibling as HTMLElement | null;
+                  if (fallback) fallback.classList.remove('hidden');
+                }}
+              />
               <Utensils className="h-12 w-12 text-purple-600 hidden" />
             </div>
 
