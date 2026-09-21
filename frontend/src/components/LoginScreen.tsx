@@ -215,7 +215,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
 
         {/* Security watermark footer */}
         <div className="text-center space-y-1 opacity-80">
-  <p className="text-xs font-bold">Official IRD verified RMS system</p>
+  <p className="text-base font-bold text-[#9333EA]">Official IRD verified RMS system</p>
   <p className="text-[10px] text-slate-400">{t.unauthorizedTip}</p>
   <p className="text-[9px] font-bold uppercase tracking-wider">{t.envNote}</p>
 </div>
