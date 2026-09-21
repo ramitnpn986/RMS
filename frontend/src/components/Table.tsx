@@ -205,7 +205,7 @@ const Tables: React.FC = () => {
         }}
       >
         <div>
-          <span style={{ fontSize: 13, fontWeight: 700, color: "#0d9488", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "#purple-600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
             Billing & VAT Audit
           </span>
           <h1 style={{ fontSize: 28, fontWeight: 800, color: "#111827", margin: "2px 0 4px" }}>
@@ -225,7 +225,7 @@ const Tables: React.FC = () => {
             display: "flex",
             alignItems: "center",
             gap: 8,
-            background: "#0d9488",
+            background: "#purple-600",
             color: "#fff",
             border: "none",
             borderRadius: 12,
@@ -425,7 +425,7 @@ const Tables: React.FC = () => {
               disabled={submitting}
               style={{
                 padding: "14px 28px",
-                background: "#0d9488",
+                background: "#purple-600",
                 color: "#fff",
                 border: "none",
                 borderRadius: 12,
@@ -537,7 +537,7 @@ const Tables: React.FC = () => {
                       flex: 1,
                       padding: "12px 0",
                       background: "#f0fdfa",
-                      color: "#0d9488",
+                      color: "#purple-600",
                       border: "1px solid #99f6e4",
                       borderRadius: 12,
                       fontWeight: 700,
