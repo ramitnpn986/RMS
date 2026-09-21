@@ -95,25 +95,25 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-start items-center p-4 relative overflow-hidden font-sans text-slate-800 selection:bg-purple-100 selection:text-purple-900">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-start pt-16 sm:pt-24 items-center p-4 relative overflow-hidden font-sans text-slate-800 selection:bg-purple-100 selection:text-purple-900">
       
       {/* Background glow effects */}
       <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-200/20 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-200/20 blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-md space-y-6" id="login-container">
+      <div className="w-full max-w-md space-y-6 mt-6" id="login-container">
         
-        {/* Core Auth Card */}
-        <div className="bg-white border border-slate-100 rounded-3xl shadow-xl px-6 pb-6 pt-1 sm:px-8 sm:pb-8 sm:pt-2 space-y-6 relative overflow-hidden" id="login-card">
+        {/* Core Auth Card - Top padding removed (`pt-0`) and overflow clipped so logo sits directly at top edge */}
+        <div className="bg-white border border-slate-100 rounded-3xl shadow-xl px-6 pb-6 pt-0 sm:px-8 sm:pb-8 sm:pt-0 space-y-6 relative overflow-hidden" id="login-card">
           
           {/* Header & Standalone Top Logo */}
-          <div className="flex flex-col items-center text-center space-y-2" id="login-header">
-            {/* Logo positioned directly at top without top margin/padding gap */}
-            <div className="flex items-center justify-center mt-0">
+          <div className="flex flex-col items-center text-center space-y-3" id="login-header">
+            {/* Logo positioned directly at the top card edge with zero top margin */}
+            <div className="flex items-center justify-center m-0 p-0">
               <img
                 src="/logo.png"
                 alt="Restaurant Logo"
-                className="h-52 w-auto object-contain rounded-[10%]"
+                className="h-52 w-auto object-contain rounded-t-2xl"
                 onError={(e) => {
                   const target = e.currentTarget;
                   target.style.display = 'none';
@@ -121,7 +121,7 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
                   if (fallback) fallback.classList.remove('hidden');
                 }}
               />
-              <Utensils className="h-16 w-16 text-purple-600 hidden" />
+              <Utensils className="h-16 w-16 text-purple-600 hidden mt-4" />
             </div>
 
             {/* Subtitle Only */}
