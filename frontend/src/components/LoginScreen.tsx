@@ -123,11 +123,6 @@ export default function LoginScreen({ lang, setLang, onLoginSuccess }: LoginScre
               />
               <Utensils className="h-16 w-16 text-purple-600 hidden mt-4" />
             </div>
-
-            {/* Subtitle Only */}
-            <div>
-              <p className="text-xs text-slate-400 max-w-xs mx-auto">{t.subtitle}</p>
-            </div>
           </div>
 
           {/* Alert messages */}
